@@ -1,0 +1,649 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		09C26C16084B32074889D31E /* TaskListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BC4D4127059F575EDAEEDD /* TaskListView.swift */; };
+		0D3BAC6A02D280499E798665 /* Things3Provider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC5494FBBB37E5CA1615C28 /* Things3Provider.swift */; };
+		0E5CD905FB1B651F35A2A0A6 /* ScheduleGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79780AA7AE3AAD4F7FF5CAA /* ScheduleGridView.swift */; };
+		2574A949F028298A0FED8D1E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BA94C00C181EA4535BB219 /* ContentView.swift */; };
+		2D942CCE7984B97213D1419D /* StandaloneBlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B96EF5B317240E4DACB0 /* StandaloneBlockView.swift */; };
+		33B7DF425CDD0100502869BA /* DragDropCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE2194AC270FC42C75E6A629 /* DragDropCoordinator.swift */; };
+		3B90164ED696F82D254694C0 /* TagInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 587635B97940EDD8F5041A45 /* TagInfo.swift */; };
+		3CB738E1A50FD81E4A213575 /* TaskItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8713C4B8B1D2383378675FF /* TaskItem.swift */; };
+		4FD0C56104DB8D0868FDAB48 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA53984D2E6F7805E525EF5 /* SettingsView.swift */; };
+		625071635E938746094940C8 /* TaskCategorizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7AEE061F235CA189E773C09 /* TaskCategorizationTests.swift */; };
+		734E71F30A4F7E1471FB3A4D /* TaskCategorySection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4528BB1E04C8197340BA2E9 /* TaskCategorySection.swift */; };
+		77856F2864F90B1BC5CF4A06 /* SummaryBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5026BA20AFA7BF9793186B4 /* SummaryBarView.swift */; };
+		7B527ABBF4C4BFA244C065EE /* TaskRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9B3F2746FB31C68CFCD1659 /* TaskRowView.swift */; };
+		972DF9D3E327654C76C4EA3B /* ScheduleModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = F200FE713F4A63DD87711ACA /* ScheduleModels.swift */; };
+		97CAE413DDCDD6D0CCD3C49B /* TaskProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC0AA55E3BFB7761B28F44EA /* TaskProvider.swift */; };
+		A3B79F258DECE1D477FF8431 /* Things3Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7DCEBEDE61AA69E08DF5395 /* Things3Database.swift */; };
+		A6F0B34D040AAD1273E84B9F /* ScheduleStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEDE54960718AAABCFE6275 /* ScheduleStore.swift */; };
+		ACD10FE0272511391DFC6493 /* TimeboxApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEF693B9918C6D363BB21132 /* TimeboxApp.swift */; };
+		AF56698B6643C1FFDD26B232 /* ProjectInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A2A252A790007DE552CC35 /* ProjectInfo.swift */; };
+		B4021D92935C4632D0D07B09 /* TaskCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79EB5537F38518438A416185 /* TaskCategory.swift */; };
+		BBCB6FF66031CF4C6C157504 /* ScheduleMigrations.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C72B7DFA2B59EC5D2946A2 /* ScheduleMigrations.swift */; };
+		C1FE1891136D00AA71796776 /* PreviewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38604FB91226D9A03FA0C37 /* PreviewData.swift */; };
+		C871EBF5B5B254A381531ABD /* Things3DateDecoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B90FED346A412DC56B39F39 /* Things3DateDecoderTests.swift */; };
+		C98ADB29740ABB63EB2FAD32 /* Things3DateDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BF51A5A4DB479BC0B917CC /* Things3DateDecoder.swift */; };
+		CC9DF3513C712FB2B0A63166 /* Things3Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06390938CC9AE3DBC4BFC50C /* Things3Models.swift */; };
+		D40CA37F9DB51C10C59B1E78 /* NowLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 509F161E16D8789884D8C4E1 /* NowLineView.swift */; };
+		E95FF33C3DCD1CCF74EB8A2C /* ProjectColorGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF47072A58805D42BE40F919 /* ProjectColorGenerator.swift */; };
+		EBB46E7FFAA632013272270E /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09C66C7C4FFEC11FC5B708D /* AppState.swift */; };
+		EC4C40EFD1B530E31BC6EEB3 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CAE78962C7DE42D800B3928 /* Theme.swift */; };
+		F4D5BD12D3E62ECD84EC73B0 /* TaskBlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F413CD1EEA1BA3609FF86F9 /* TaskBlockView.swift */; };
+		FF04EE5801CE6040A9CC2883 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 709DDCE354B9C84A5AA3F955 /* GRDB */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B5CD9B5621365C1F0596E912 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D241E58D40013DED875F4DBC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D6CD3B7C383D9D6DCE524CBC;
+			remoteInfo = TimeboxForThings3;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		06390938CC9AE3DBC4BFC50C /* Things3Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Things3Models.swift; sourceTree = "<group>"; };
+		074C23CA94E7851336EDDFEE /* TimeboxForThings3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TimeboxForThings3.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1380041A7F0B046E373D7EC4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		22B3B96EF5B317240E4DACB0 /* StandaloneBlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandaloneBlockView.swift; sourceTree = "<group>"; };
+		3F413CD1EEA1BA3609FF86F9 /* TaskBlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskBlockView.swift; sourceTree = "<group>"; };
+		509F161E16D8789884D8C4E1 /* NowLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowLineView.swift; sourceTree = "<group>"; };
+		587635B97940EDD8F5041A45 /* TagInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagInfo.swift; sourceTree = "<group>"; };
+		5B90FED346A412DC56B39F39 /* Things3DateDecoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Things3DateDecoderTests.swift; sourceTree = "<group>"; };
+		6CAE78962C7DE42D800B3928 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		79EB5537F38518438A416185 /* TaskCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCategory.swift; sourceTree = "<group>"; };
+		7ABD73A7A737C1C1465974F3 /* TimeboxForThings3Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TimeboxForThings3Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		94A2A252A790007DE552CC35 /* ProjectInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectInfo.swift; sourceTree = "<group>"; };
+		A5026BA20AFA7BF9793186B4 /* SummaryBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryBarView.swift; sourceTree = "<group>"; };
+		A7AEE061F235CA189E773C09 /* TaskCategorizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCategorizationTests.swift; sourceTree = "<group>"; };
+		AE2194AC270FC42C75E6A629 /* DragDropCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragDropCoordinator.swift; sourceTree = "<group>"; };
+		AF47072A58805D42BE40F919 /* ProjectColorGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectColorGenerator.swift; sourceTree = "<group>"; };
+		B09C66C7C4FFEC11FC5B708D /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		B4528BB1E04C8197340BA2E9 /* TaskCategorySection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCategorySection.swift; sourceTree = "<group>"; };
+		B8713C4B8B1D2383378675FF /* TaskItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskItem.swift; sourceTree = "<group>"; };
+		C5BF51A5A4DB479BC0B917CC /* Things3DateDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Things3DateDecoder.swift; sourceTree = "<group>"; };
+		CAC5494FBBB37E5CA1615C28 /* Things3Provider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Things3Provider.swift; sourceTree = "<group>"; };
+		CEEDE54960718AAABCFE6275 /* ScheduleStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleStore.swift; sourceTree = "<group>"; };
+		D5BC4D4127059F575EDAEEDD /* TaskListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListView.swift; sourceTree = "<group>"; };
+		D79780AA7AE3AAD4F7FF5CAA /* ScheduleGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleGridView.swift; sourceTree = "<group>"; };
+		DC0AA55E3BFB7761B28F44EA /* TaskProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskProvider.swift; sourceTree = "<group>"; };
+		DEF693B9918C6D363BB21132 /* TimeboxApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeboxApp.swift; sourceTree = "<group>"; };
+		DFA53984D2E6F7805E525EF5 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		E0BA94C00C181EA4535BB219 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		E1C72B7DFA2B59EC5D2946A2 /* ScheduleMigrations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleMigrations.swift; sourceTree = "<group>"; };
+		E38604FB91226D9A03FA0C37 /* PreviewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewData.swift; sourceTree = "<group>"; };
+		F200FE713F4A63DD87711ACA /* ScheduleModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleModels.swift; sourceTree = "<group>"; };
+		F7DCEBEDE61AA69E08DF5395 /* Things3Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Things3Database.swift; sourceTree = "<group>"; };
+		F9B3F2746FB31C68CFCD1659 /* TaskRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRowView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		566608233AEF8FADE86B4BF4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FF04EE5801CE6040A9CC2883 /* GRDB in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2A450ECB802C29DEF7085751 /* TimeboxForThings3Tests */ = {
+			isa = PBXGroup;
+			children = (
+				A7AEE061F235CA189E773C09 /* TaskCategorizationTests.swift */,
+				5B90FED346A412DC56B39F39 /* Things3DateDecoderTests.swift */,
+			);
+			path = TimeboxForThings3Tests;
+			sourceTree = "<group>";
+		};
+		2BD658681637442B84CAD4FE /* Things3 */ = {
+			isa = PBXGroup;
+			children = (
+				F7DCEBEDE61AA69E08DF5395 /* Things3Database.swift */,
+				C5BF51A5A4DB479BC0B917CC /* Things3DateDecoder.swift */,
+				06390938CC9AE3DBC4BFC50C /* Things3Models.swift */,
+				CAC5494FBBB37E5CA1615C28 /* Things3Provider.swift */,
+			);
+			path = Things3;
+			sourceTree = "<group>";
+		};
+		37469249E07BECB72024EBFA /* App */ = {
+			isa = PBXGroup;
+			children = (
+				B09C66C7C4FFEC11FC5B708D /* AppState.swift */,
+				E0BA94C00C181EA4535BB219 /* ContentView.swift */,
+				DEF693B9918C6D363BB21132 /* TimeboxApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		4300F0045F4D6EFCB5FE829C /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				ECD29770F655C938E335005B /* DragDrop */,
+				B9878BB285F524E474A8C6C4 /* Schedule */,
+				605158F674112DC562DFC3BF /* TaskList */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		605158F674112DC562DFC3BF /* TaskList */ = {
+			isa = PBXGroup;
+			children = (
+				B4528BB1E04C8197340BA2E9 /* TaskCategorySection.swift */,
+				D5BC4D4127059F575EDAEEDD /* TaskListView.swift */,
+				F9B3F2746FB31C68CFCD1659 /* TaskRowView.swift */,
+			);
+			path = TaskList;
+			sourceTree = "<group>";
+		};
+		619676DE4B7DA32B60F404F9 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				AF47072A58805D42BE40F919 /* ProjectColorGenerator.swift */,
+				6CAE78962C7DE42D800B3928 /* Theme.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		6C8B2C6719BBDB064439661F /* TimeboxForThings3 */ = {
+			isa = PBXGroup;
+			children = (
+				37469249E07BECB72024EBFA /* App */,
+				80353BDA3EC0E8214DC83C45 /* Data */,
+				4300F0045F4D6EFCB5FE829C /* Features */,
+				EE62DA62688E3F58FE54F28C /* Preview Content */,
+				6DC9AA58C13027D487C0CBC4 /* Resources */,
+				619676DE4B7DA32B60F404F9 /* Shared */,
+			);
+			path = TimeboxForThings3;
+			sourceTree = "<group>";
+		};
+		6DC9AA58C13027D487C0CBC4 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				1380041A7F0B046E373D7EC4 /* Info.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		80353BDA3EC0E8214DC83C45 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				DC0AA55E3BFB7761B28F44EA /* TaskProvider.swift */,
+				EB0F44A02B20FFD1A4C391B1 /* Models */,
+				C240B60EC9FD94CA6E27D32C /* Schedule */,
+				2BD658681637442B84CAD4FE /* Things3 */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		B9878BB285F524E474A8C6C4 /* Schedule */ = {
+			isa = PBXGroup;
+			children = (
+				509F161E16D8789884D8C4E1 /* NowLineView.swift */,
+				D79780AA7AE3AAD4F7FF5CAA /* ScheduleGridView.swift */,
+				DFA53984D2E6F7805E525EF5 /* SettingsView.swift */,
+				22B3B96EF5B317240E4DACB0 /* StandaloneBlockView.swift */,
+				A5026BA20AFA7BF9793186B4 /* SummaryBarView.swift */,
+				3F413CD1EEA1BA3609FF86F9 /* TaskBlockView.swift */,
+			);
+			path = Schedule;
+			sourceTree = "<group>";
+		};
+		BBBCE1ECDD16FC59CF4F88B3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				074C23CA94E7851336EDDFEE /* TimeboxForThings3.app */,
+				7ABD73A7A737C1C1465974F3 /* TimeboxForThings3Tests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C240B60EC9FD94CA6E27D32C /* Schedule */ = {
+			isa = PBXGroup;
+			children = (
+				E1C72B7DFA2B59EC5D2946A2 /* ScheduleMigrations.swift */,
+				F200FE713F4A63DD87711ACA /* ScheduleModels.swift */,
+				CEEDE54960718AAABCFE6275 /* ScheduleStore.swift */,
+			);
+			path = Schedule;
+			sourceTree = "<group>";
+		};
+		EB0F44A02B20FFD1A4C391B1 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				94A2A252A790007DE552CC35 /* ProjectInfo.swift */,
+				587635B97940EDD8F5041A45 /* TagInfo.swift */,
+				79EB5537F38518438A416185 /* TaskCategory.swift */,
+				B8713C4B8B1D2383378675FF /* TaskItem.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		ECD29770F655C938E335005B /* DragDrop */ = {
+			isa = PBXGroup;
+			children = (
+				AE2194AC270FC42C75E6A629 /* DragDropCoordinator.swift */,
+			);
+			path = DragDrop;
+			sourceTree = "<group>";
+		};
+		EE62DA62688E3F58FE54F28C /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				E38604FB91226D9A03FA0C37 /* PreviewData.swift */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		EEA90443A24046E2DAE5772B = {
+			isa = PBXGroup;
+			children = (
+				6C8B2C6719BBDB064439661F /* TimeboxForThings3 */,
+				2A450ECB802C29DEF7085751 /* TimeboxForThings3Tests */,
+				BBBCE1ECDD16FC59CF4F88B3 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		7D1FD8D078AC9E8C0B92784F /* TimeboxForThings3Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7BE5EA8C5D8B444B72046101 /* Build configuration list for PBXNativeTarget "TimeboxForThings3Tests" */;
+			buildPhases = (
+				87DAF862CCDA28A03AE7C6ED /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4FDC9DD72EC167C1380A8623 /* PBXTargetDependency */,
+			);
+			name = TimeboxForThings3Tests;
+			packageProductDependencies = (
+			);
+			productName = TimeboxForThings3Tests;
+			productReference = 7ABD73A7A737C1C1465974F3 /* TimeboxForThings3Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		D6CD3B7C383D9D6DCE524CBC /* TimeboxForThings3 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C0B7E22497D9EA9982D1C665 /* Build configuration list for PBXNativeTarget "TimeboxForThings3" */;
+			buildPhases = (
+				C704740E1B81D1BC709495CA /* Sources */,
+				566608233AEF8FADE86B4BF4 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TimeboxForThings3;
+			packageProductDependencies = (
+				709DDCE354B9C84A5AA3F955 /* GRDB */,
+			);
+			productName = TimeboxForThings3;
+			productReference = 074C23CA94E7851336EDDFEE /* TimeboxForThings3.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D241E58D40013DED875F4DBC /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1630;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 2B9B18222C56C43076B579CC /* Build configuration list for PBXProject "TimeboxForThings3" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = EEA90443A24046E2DAE5772B;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				56B4BBE6FF8137350490E967 /* XCRemoteSwiftPackageReference "GRDB.swift" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = BBBCE1ECDD16FC59CF4F88B3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D6CD3B7C383D9D6DCE524CBC /* TimeboxForThings3 */,
+				7D1FD8D078AC9E8C0B92784F /* TimeboxForThings3Tests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		87DAF862CCDA28A03AE7C6ED /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				625071635E938746094940C8 /* TaskCategorizationTests.swift in Sources */,
+				C871EBF5B5B254A381531ABD /* Things3DateDecoderTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C704740E1B81D1BC709495CA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EBB46E7FFAA632013272270E /* AppState.swift in Sources */,
+				2574A949F028298A0FED8D1E /* ContentView.swift in Sources */,
+				33B7DF425CDD0100502869BA /* DragDropCoordinator.swift in Sources */,
+				D40CA37F9DB51C10C59B1E78 /* NowLineView.swift in Sources */,
+				C1FE1891136D00AA71796776 /* PreviewData.swift in Sources */,
+				E95FF33C3DCD1CCF74EB8A2C /* ProjectColorGenerator.swift in Sources */,
+				AF56698B6643C1FFDD26B232 /* ProjectInfo.swift in Sources */,
+				0E5CD905FB1B651F35A2A0A6 /* ScheduleGridView.swift in Sources */,
+				BBCB6FF66031CF4C6C157504 /* ScheduleMigrations.swift in Sources */,
+				972DF9D3E327654C76C4EA3B /* ScheduleModels.swift in Sources */,
+				A6F0B34D040AAD1273E84B9F /* ScheduleStore.swift in Sources */,
+				4FD0C56104DB8D0868FDAB48 /* SettingsView.swift in Sources */,
+				2D942CCE7984B97213D1419D /* StandaloneBlockView.swift in Sources */,
+				77856F2864F90B1BC5CF4A06 /* SummaryBarView.swift in Sources */,
+				3B90164ED696F82D254694C0 /* TagInfo.swift in Sources */,
+				F4D5BD12D3E62ECD84EC73B0 /* TaskBlockView.swift in Sources */,
+				B4021D92935C4632D0D07B09 /* TaskCategory.swift in Sources */,
+				734E71F30A4F7E1471FB3A4D /* TaskCategorySection.swift in Sources */,
+				3CB738E1A50FD81E4A213575 /* TaskItem.swift in Sources */,
+				09C26C16084B32074889D31E /* TaskListView.swift in Sources */,
+				97CAE413DDCDD6D0CCD3C49B /* TaskProvider.swift in Sources */,
+				7B527ABBF4C4BFA244C065EE /* TaskRowView.swift in Sources */,
+				EC4C40EFD1B530E31BC6EEB3 /* Theme.swift in Sources */,
+				A3B79F258DECE1D477FF8431 /* Things3Database.swift in Sources */,
+				C98ADB29740ABB63EB2FAD32 /* Things3DateDecoder.swift in Sources */,
+				CC9DF3513C712FB2B0A63166 /* Things3Models.swift in Sources */,
+				0D3BAC6A02D280499E798665 /* Things3Provider.swift in Sources */,
+				ACD10FE0272511391DFC6493 /* TimeboxApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4FDC9DD72EC167C1380A8623 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D6CD3B7C383D9D6DCE524CBC /* TimeboxForThings3 */;
+			targetProxy = B5CD9B5621365C1F0596E912 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		3D90F6A9E4376ADFCF7D6EFE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TimeboxForThings3/Resources/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Timebox;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.timebox.TimeboxForThings3;
+				PRODUCT_MODULE_NAME = TimeboxForThings3;
+				PRODUCT_NAME = Timebox;
+				SDKROOT = macosx;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		579DD0EB15D2BCA3257F59D4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		648C5B2E7028804DB5EBBEC2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.timebox.TimeboxForThings3Tests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Timebox.app/Contents/MacOS/Timebox";
+			};
+			name = Release;
+		};
+		8E447B837D655394971CE04D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		B5BC6CEBF0E51588C5857421 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.timebox.TimeboxForThings3Tests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Timebox.app/Contents/MacOS/Timebox";
+			};
+			name = Debug;
+		};
+		C0794BE8BE2AEC1DF1854BB0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TimeboxForThings3/Resources/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Timebox;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.timebox.TimeboxForThings3;
+				PRODUCT_MODULE_NAME = TimeboxForThings3;
+				PRODUCT_NAME = Timebox;
+				SDKROOT = macosx;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2B9B18222C56C43076B579CC /* Build configuration list for PBXProject "TimeboxForThings3" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8E447B837D655394971CE04D /* Debug */,
+				579DD0EB15D2BCA3257F59D4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		7BE5EA8C5D8B444B72046101 /* Build configuration list for PBXNativeTarget "TimeboxForThings3Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B5BC6CEBF0E51588C5857421 /* Debug */,
+				648C5B2E7028804DB5EBBEC2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C0B7E22497D9EA9982D1C665 /* Build configuration list for PBXNativeTarget "TimeboxForThings3" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3D90F6A9E4376ADFCF7D6EFE /* Debug */,
+				C0794BE8BE2AEC1DF1854BB0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		56B4BBE6FF8137350490E967 /* XCRemoteSwiftPackageReference "GRDB.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/groue/GRDB.swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		709DDCE354B9C84A5AA3F955 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 56B4BBE6FF8137350490E967 /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			productName = GRDB;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = D241E58D40013DED875F4DBC /* Project object */;
+}

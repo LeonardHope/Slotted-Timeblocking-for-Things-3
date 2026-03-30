@@ -1,0 +1,224 @@
+import SwiftUI
+
+/// RHS panel: vertical time grid with scheduled blocks.
+struct ScheduleGridView: View {
+    @Environment(AppState.self) private var appState
+
+    // Top padding so the first time label (e.g. "9 AM") isn't clipped
+    private let topPadding: CGFloat = 12
+    // Bottom padding so the last time label (e.g. "5 PM") has room
+    private let bottomPadding: CGFloat = 20
+
+    var body: some View {
+        VStack(spacing: 0) {
+            // Summary bar
+            SummaryBarView()
+
+            Divider()
+
+            // Time grid — fills all available vertical space
+            GeometryReader { geo in
+                ScrollViewReader { proxy in
+                    ScrollView(.vertical) {
+                        ZStack(alignment: .topLeading) {
+                            // Background grid lines
+                            gridLines
+
+                            // Drop zone (invisible, handles drops and double-clicks)
+                            dropZone
+                                .padding(.top, topPadding)
+
+                            // Scheduled blocks
+                            blocksLayer
+                                .padding(.top, topPadding)
+
+                            // Now line
+                            NowLineView(startHour: appState.startHour)
+                                .padding(.top, topPadding)
+                                .id("nowLine")
+                        }
+                        .frame(width: geo.size.width, height: gridHeight + topPadding + bottomPadding)
+                    }
+                    .onAppear {
+                        proxy.scrollTo("nowLine", anchor: .center)
+                    }
+                }
+            }
+        }
+        .background(Theme.contentBackground)
+    }
+
+    // MARK: - Layout calculations
+
+    private var startMinutes: Int { appState.startHour * 60 }
+
+    private var totalSlots: Int {
+        (appState.endHour - appState.startHour) * 2
+    }
+
+    private var gridHeight: CGFloat {
+        CGFloat(totalSlots) * Theme.slotHeight
+    }
+
+    private func yPosition(for minutesSinceMidnight: Int) -> CGFloat {
+        CGFloat(minutesSinceMidnight - startMinutes) * Theme.pointsPerMinute
+    }
+
+    private func height(for duration: Int) -> CGFloat {
+        CGFloat(duration) * Theme.pointsPerMinute
+    }
+
+    // MARK: - Drop zone
+
+    private var dropZone: some View {
+        Rectangle()
+            .fill(Color.clear)
+            .contentShape(Rectangle())
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .dropDestination(for: TaskDragItem.self) { items, location in
+                guard let item = items.first, let store = appState.scheduleStore else { return false }
+                let minutes = minutesFromLocation(location)
+                let snapped = snapToGrid(minutes)
+                try? store.addTimeBlock(
+                    taskUUID: item.taskUUID,
+                    date: appState.selectedDate,
+                    startTime: snapped
+                )
+                return true
+            }
+            .onTapGesture(count: 2) { location in
+                guard let store = appState.scheduleStore else { return }
+                let minutes = minutesFromLocation(location)
+                let snapped = snapToGrid(minutes)
+                try? store.addStandaloneBlock(
+                    date: appState.selectedDate,
+                    startTime: snapped
+                )
+            }
+    }
+
+    private func minutesFromLocation(_ location: CGPoint) -> Int {
+        let yOffset = location.y
+        return startMinutes + Int(yOffset / Theme.pointsPerMinute)
+    }
+
+    private func snapToGrid(_ minutes: Int, gridSize: Int = 30) -> Int {
+        (minutes / gridSize) * gridSize
+    }
+
+    // MARK: - Blocks layer
+
+    private var blocksLayer: some View {
+        let tasksByUUID = Dictionary(grouping: appState.taskProvider.tasks, by: \.id)
+
+        return ZStack(alignment: .topLeading) {
+            if let store = appState.scheduleStore {
+                ForEach(store.timeBlocks) { block in
+                    let task = tasksByUUID[block.taskUUID]?.first
+                    TaskBlockView(
+                        block: block,
+                        taskItem: task,
+                        onDelete: {
+                            try? store.deleteTimeBlock(id: block.id)
+                        },
+                        onMove: { newStart in
+                            var updated = block
+                            updated.startTime = newStart
+                            try? store.updateTimeBlock(updated)
+                        },
+                        onResize: { newDuration in
+                            var updated = block
+                            updated.duration = newDuration
+                            try? store.updateTimeBlock(updated)
+                        }
+                    )
+                    .frame(height: height(for: block.duration))
+                    .offset(
+                        x: Theme.timeLabelWidth + 4,
+                        y: yPosition(for: block.startTime)
+                    )
+                    .padding(.trailing, Theme.timeLabelWidth + 12)
+                }
+
+                ForEach(store.standaloneBlocks) { block in
+                    StandaloneBlockView(
+                        block: block,
+                        onDelete: {
+                            try? store.deleteStandaloneBlock(id: block.id)
+                        },
+                        onTitleChange: { newTitle in
+                            var updated = block
+                            updated.title = newTitle
+                            try? store.updateStandaloneBlock(updated)
+                        },
+                        onColorCycle: {
+                            var updated = block
+                            updated.colorIndex = (block.colorIndex + 1) % 10
+                            try? store.updateStandaloneBlock(updated)
+                        },
+                        onMove: { newStart in
+                            var updated = block
+                            updated.startTime = newStart
+                            try? store.updateStandaloneBlock(updated)
+                        },
+                        onResize: { newDuration in
+                            var updated = block
+                            updated.duration = newDuration
+                            try? store.updateStandaloneBlock(updated)
+                        }
+                    )
+                    .frame(height: height(for: block.duration))
+                    .offset(
+                        x: Theme.timeLabelWidth + 4,
+                        y: yPosition(for: block.startTime)
+                    )
+                    .padding(.trailing, Theme.timeLabelWidth + 12)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    // MARK: - Grid lines
+
+    private var gridLines: some View {
+        Canvas { context, size in
+            let endMinutes = appState.endHour * 60
+
+            for minutes in stride(from: startMinutes, through: endMinutes, by: 30) {
+                let y = topPadding + CGFloat(minutes - startMinutes) * Theme.pointsPerMinute
+                let isHour = minutes % 60 == 0
+
+                // Grid line
+                var path = Path()
+                path.move(to: CGPoint(x: Theme.timeLabelWidth, y: y))
+                path.addLine(to: CGPoint(x: size.width, y: y))
+
+                context.stroke(
+                    path,
+                    with: .color(Theme.gridLineColor.opacity(isHour ? 0.5 : 0.2)),
+                    lineWidth: isHour ? 1 : 0.5
+                )
+
+                // Time label at every hour mark (including the last one)
+                if isHour {
+                    let hour = minutes / 60
+                    let label: String
+                    if hour == 0 { label = "12 AM" }
+                    else if hour < 12 { label = "\(hour) AM" }
+                    else if hour == 12 { label = "12 PM" }
+                    else { label = "\(hour - 12) PM" }
+
+                    let text = Text(label)
+                        .font(Theme.metadata)
+                        .foregroundStyle(Theme.textTertiary)
+                    context.draw(
+                        context.resolve(text),
+                        at: CGPoint(x: Theme.timeLabelWidth - 8, y: y),
+                        anchor: .trailing
+                    )
+                }
+            }
+        }
+    }
+}

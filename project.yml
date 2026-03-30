@@ -1,0 +1,59 @@
+name: TimeboxForThings3
+options:
+  bundleIdPrefix: com.timebox
+  deploymentTarget:
+    macOS: "14.0"
+  xcodeVersion: "16.3"
+
+packages:
+  GRDB:
+    url: https://github.com/groue/GRDB.swift.git
+    from: "7.0.0"
+
+schemes:
+  TimeboxForThings3:
+    build:
+      targets:
+        TimeboxForThings3: all
+        TimeboxForThings3Tests: [test]
+    test:
+      targets:
+        - TimeboxForThings3Tests
+
+targets:
+  TimeboxForThings3:
+    type: application
+    platform: macOS
+    sources:
+      - TimeboxForThings3
+    dependencies:
+      - package: GRDB
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.timebox.TimeboxForThings3
+        PRODUCT_NAME: Timebox
+        PRODUCT_MODULE_NAME: TimeboxForThings3
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: 1
+        INFOPLIST_KEY_CFBundleDisplayName: Timebox
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.productivity
+        SWIFT_VERSION: "6.0"
+        INFOPLIST_FILE: TimeboxForThings3/Resources/Info.plist
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGN_ENTITLEMENTS: ""
+        ENABLE_APP_SANDBOX: NO
+        SWIFT_STRICT_CONCURRENCY: complete
+
+  TimeboxForThings3Tests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - TimeboxForThings3Tests
+    dependencies:
+      - target: TimeboxForThings3
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.timebox.TimeboxForThings3Tests
+        SWIFT_VERSION: "6.0"
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Timebox.app/Contents/MacOS/Timebox"
