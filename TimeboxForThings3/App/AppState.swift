@@ -16,7 +16,14 @@ final class AppState {
     var scheduleStore: ScheduleStore?
     var selectedDate: Date = .now
     var dragDropCoordinator = DragDropCoordinator()
+    var selectedBlockID: String?
     var error: Error?
+
+    /// Task UUIDs that are currently scheduled on the RHS
+    var scheduledTaskUUIDs: Set<String> {
+        guard let store = scheduleStore else { return [] }
+        return Set(store.timeBlocks.map(\.taskUUID))
+    }
 
     // Persisted preferences
     var startHour: Int {
@@ -28,17 +35,25 @@ final class AppState {
     var appearanceMode: AppearanceMode {
         didSet { UserDefaults.standard.set(appearanceMode.rawValue, forKey: "appearanceMode") }
     }
+    var textScale: Double {
+        didSet { UserDefaults.standard.set(textScale, forKey: "textScale") }
+    }
+    var hideEmptyCategories: Bool {
+        didSet { UserDefaults.standard.set(hideEmptyCategories, forKey: "hideEmptyCategories") }
+    }
 
     init() {
         self.taskProvider = Things3Provider()
 
         let defaults = UserDefaults.standard
-        // Register defaults for first launch
-        defaults.register(defaults: ["startHour": 9, "endHour": 17, "appearanceMode": 0])
+        defaults.register(defaults: ["startHour": 9, "endHour": 17, "appearanceMode": 0, "textScale": 1.0, "hideEmptyCategories": true])
 
         self.startHour = defaults.integer(forKey: "startHour")
         self.endHour = defaults.integer(forKey: "endHour")
         self.appearanceMode = AppearanceMode(rawValue: defaults.integer(forKey: "appearanceMode")) ?? .auto
+        self.textScale = defaults.double(forKey: "textScale")
+        self.hideEmptyCategories = defaults.bool(forKey: "hideEmptyCategories")
+        if self.textScale == 0 { self.textScale = 1.0 }
     }
 
     func initialize() async {
@@ -49,6 +64,21 @@ final class AppState {
             try await scheduleStore?.loadBlocks(for: selectedDate)
         } catch {
             self.error = error
+        }
+
+        observeDayChange()
+    }
+
+    /// Listens for NSCalendarDayChanged notification from the system.
+    private func observeDayChange() {
+        NotificationCenter.default.addObserver(
+            forName: .NSCalendarDayChanged,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor [weak self] in
+                await self?.changeDate(to: .now)
+            }
         }
     }
 

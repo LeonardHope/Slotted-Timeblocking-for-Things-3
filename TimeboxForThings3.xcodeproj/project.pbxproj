@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		078E75ABE33F2452303D6D37 /* DropTargetGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B8070ED18AFFD23E729C3C3 /* DropTargetGrid.swift */; };
 		09C26C16084B32074889D31E /* TaskListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BC4D4127059F575EDAEEDD /* TaskListView.swift */; };
 		0D3BAC6A02D280499E798665 /* Things3Provider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC5494FBBB37E5CA1615C28 /* Things3Provider.swift */; };
 		0E5CD905FB1B651F35A2A0A6 /* ScheduleGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79780AA7AE3AAD4F7FF5CAA /* ScheduleGridView.swift */; };
@@ -63,6 +64,7 @@
 		79EB5537F38518438A416185 /* TaskCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCategory.swift; sourceTree = "<group>"; };
 		7ABD73A7A737C1C1465974F3 /* TimeboxForThings3Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TimeboxForThings3Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		94A2A252A790007DE552CC35 /* ProjectInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectInfo.swift; sourceTree = "<group>"; };
+		9B8070ED18AFFD23E729C3C3 /* DropTargetGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropTargetGrid.swift; sourceTree = "<group>"; };
 		A5026BA20AFA7BF9793186B4 /* SummaryBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryBarView.swift; sourceTree = "<group>"; };
 		A7AEE061F235CA189E773C09 /* TaskCategorizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCategorizationTests.swift; sourceTree = "<group>"; };
 		AE2194AC270FC42C75E6A629 /* DragDropCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragDropCoordinator.swift; sourceTree = "<group>"; };
@@ -236,6 +238,7 @@
 			isa = PBXGroup;
 			children = (
 				AE2194AC270FC42C75E6A629 /* DragDropCoordinator.swift */,
+				9B8070ED18AFFD23E729C3C3 /* DropTargetGrid.swift */,
 			);
 			path = DragDrop;
 			sourceTree = "<group>";
@@ -348,6 +351,7 @@
 				EBB46E7FFAA632013272270E /* AppState.swift in Sources */,
 				2574A949F028298A0FED8D1E /* ContentView.swift in Sources */,
 				33B7DF425CDD0100502869BA /* DragDropCoordinator.swift in Sources */,
+				078E75ABE33F2452303D6D37 /* DropTargetGrid.swift in Sources */,
 				D40CA37F9DB51C10C59B1E78 /* NowLineView.swift in Sources */,
 				C1FE1891136D00AA71796776 /* PreviewData.swift in Sources */,
 				E95FF33C3DCD1CCF74EB8A2C /* ProjectColorGenerator.swift in Sources */,
@@ -397,7 +401,7 @@
 				ENABLE_APP_SANDBOX = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TimeboxForThings3/Resources/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Timebox;
+				INFOPLIST_KEY_CFBundleDisplayName = "Timebox for Things 3";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -406,7 +410,7 @@
 				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.timebox.TimeboxForThings3;
 				PRODUCT_MODULE_NAME = TimeboxForThings3;
-				PRODUCT_NAME = Timebox;
+				PRODUCT_NAME = "Timebox for Things 3";
 				SDKROOT = macosx;
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 6.0;
@@ -458,7 +462,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -483,7 +487,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.timebox.TimeboxForThings3Tests;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 6.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Timebox.app/Contents/MacOS/Timebox";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Timebox for Things 3.app/Contents/MacOS/Timebox for Things 3";
 			};
 			name = Release;
 		};
@@ -538,7 +542,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -564,7 +568,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.timebox.TimeboxForThings3Tests;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 6.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Timebox.app/Contents/MacOS/Timebox";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Timebox for Things 3.app/Contents/MacOS/Timebox for Things 3";
 			};
 			name = Debug;
 		};
@@ -578,7 +582,7 @@
 				ENABLE_APP_SANDBOX = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TimeboxForThings3/Resources/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Timebox;
+				INFOPLIST_KEY_CFBundleDisplayName = "Timebox for Things 3";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -587,7 +591,7 @@
 				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.timebox.TimeboxForThings3;
 				PRODUCT_MODULE_NAME = TimeboxForThings3;
-				PRODUCT_NAME = Timebox;
+				PRODUCT_NAME = "Timebox for Things 3";
 				SDKROOT = macosx;
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 6.0;

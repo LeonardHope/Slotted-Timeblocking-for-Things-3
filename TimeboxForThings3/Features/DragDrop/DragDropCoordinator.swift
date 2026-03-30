@@ -23,6 +23,11 @@ final class DragDropCoordinator {
     var draggedTaskUUID: String?
     var highlightedSlotMinutes: Int?
 
+    /// Target slot shown when moving an existing block on the RHS
+    var moveTargetMinutes: Int?
+    var moveTargetDuration: Int = 30
+    var isMovingBlock = false
+
     func beginDrag(taskUUID: String) {
         isDragging = true
         draggedTaskUUID = taskUUID
@@ -30,6 +35,22 @@ final class DragDropCoordinator {
 
     func updateHighlight(minutes: Int?) {
         highlightedSlotMinutes = minutes
+    }
+
+    func beginMove(targetMinutes: Int, duration: Int = 30) {
+        isMovingBlock = true
+        moveTargetMinutes = targetMinutes
+        moveTargetDuration = duration
+    }
+
+    func updateMove(targetMinutes: Int) {
+        moveTargetMinutes = targetMinutes
+    }
+
+    func endMove() {
+        isMovingBlock = false
+        moveTargetMinutes = nil
+        moveTargetDuration = 30
     }
 
     func endDrag() {

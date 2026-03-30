@@ -8,10 +8,23 @@ struct TimeboxApp: App {
         WindowGroup {
             ContentView()
                 .environment(appState)
+                .environment(\.textScale, appState.textScale)
                 .preferredColorScheme(appState.preferredColorScheme)
                 .frame(minWidth: 800, minHeight: 600)
         }
-        .windowStyle(.titleBar)
         .defaultSize(width: 1100, height: 750)
+    }
+}
+
+// MARK: - Text Scale Environment Key
+
+private struct TextScaleKey: EnvironmentKey {
+    static let defaultValue: Double = 1.0
+}
+
+extension EnvironmentValues {
+    var textScale: Double {
+        get { self[TextScaleKey.self] }
+        set { self[TextScaleKey.self] = newValue }
     }
 }

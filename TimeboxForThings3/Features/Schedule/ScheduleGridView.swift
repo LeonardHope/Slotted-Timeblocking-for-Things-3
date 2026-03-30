@@ -4,10 +4,11 @@ import SwiftUI
 struct ScheduleGridView: View {
     @Environment(AppState.self) private var appState
 
-    // Top padding so the first time label (e.g. "9 AM") isn't clipped
     private let topPadding: CGFloat = 12
-    // Bottom padding so the last time label (e.g. "5 PM") has room
     private let bottomPadding: CGFloat = 20
+    @State private var dropTargeted = false
+    @State private var dropLocation: CGPoint?
+    @FocusState private var isFocused: Bool
 
     var body: some View {
         VStack(spacing: 0) {
@@ -37,7 +38,7 @@ struct ScheduleGridView: View {
                                 .padding(.top, topPadding)
                                 .id("nowLine")
                         }
-                        .frame(width: geo.size.width, height: gridHeight + topPadding + bottomPadding)
+                        .frame(width: geo.size.width, height: max(gridHeight + topPadding + bottomPadding, geo.size.height))
                     }
                     .onAppear {
                         proxy.scrollTo("nowLine", anchor: .center)
@@ -46,6 +47,32 @@ struct ScheduleGridView: View {
             }
         }
         .background(Theme.contentBackground)
+        .focused($isFocused)
+        .focusEffectDisabled()
+        .onChange(of: appState.selectedBlockID) {
+            if appState.selectedBlockID != nil { isFocused = true }
+        }
+        .onKeyPress(.upArrow) {
+            moveSelectedBlock(by: -15)
+            return .handled
+        }
+        .onKeyPress(.downArrow) {
+            moveSelectedBlock(by: 15)
+            return .handled
+        }
+    }
+
+    private func moveSelectedBlock(by minutes: Int) {
+        guard let selectedID = appState.selectedBlockID,
+              let store = appState.scheduleStore else { return }
+
+        if var block = store.timeBlocks.first(where: { $0.id == selectedID }) {
+            block.startTime = max(0, block.startTime + minutes)
+            try? store.updateTimeBlock(block)
+        } else if var block = store.standaloneBlocks.first(where: { $0.id == selectedID }) {
+            block.startTime = max(0, block.startTime + minutes)
+            try? store.updateStandaloneBlock(block)
+        }
     }
 
     // MARK: - Layout calculations
@@ -71,30 +98,32 @@ struct ScheduleGridView: View {
     // MARK: - Drop zone
 
     private var dropZone: some View {
-        Rectangle()
-            .fill(Color.clear)
-            .contentShape(Rectangle())
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .dropDestination(for: TaskDragItem.self) { items, location in
-                guard let item = items.first, let store = appState.scheduleStore else { return false }
-                let minutes = minutesFromLocation(location)
+        DropTargetGrid(
+            startMinutes: startMinutes,
+            pointsPerMinute: Theme.pointsPerMinute,
+            slotHeight: height(for: 30),
+            timeLabelWidth: Theme.timeLabelWidth,
+            onDrop: { taskUUID, minutes in
+                guard let store = appState.scheduleStore else { return }
                 let snapped = snapToGrid(minutes)
                 try? store.addTimeBlock(
-                    taskUUID: item.taskUUID,
+                    taskUUID: taskUUID,
                     date: appState.selectedDate,
                     startTime: snapped
                 )
-                return true
-            }
-            .onTapGesture(count: 2) { location in
+            },
+            onDoubleClick: { minutes in
                 guard let store = appState.scheduleStore else { return }
-                let minutes = minutesFromLocation(location)
                 let snapped = snapToGrid(minutes)
                 try? store.addStandaloneBlock(
                     date: appState.selectedDate,
                     startTime: snapped
                 )
+            },
+            onSingleClick: {
+                appState.selectedBlockID = nil
             }
+        )
     }
 
     private func minutesFromLocation(_ location: CGPoint) -> Int {
@@ -126,13 +155,13 @@ struct ScheduleGridView: View {
                             updated.startTime = newStart
                             try? store.updateTimeBlock(updated)
                         },
-                        onResize: { newDuration in
+                        onResize: { newStart, newDuration in
                             var updated = block
+                            updated.startTime = newStart
                             updated.duration = newDuration
                             try? store.updateTimeBlock(updated)
                         }
                     )
-                    .frame(height: height(for: block.duration))
                     .offset(
                         x: Theme.timeLabelWidth + 4,
                         y: yPosition(for: block.startTime)
@@ -161,13 +190,13 @@ struct ScheduleGridView: View {
                             updated.startTime = newStart
                             try? store.updateStandaloneBlock(updated)
                         },
-                        onResize: { newDuration in
+                        onResize: { newStart, newDuration in
                             var updated = block
+                            updated.startTime = newStart
                             updated.duration = newDuration
                             try? store.updateStandaloneBlock(updated)
                         }
                     )
-                    .frame(height: height(for: block.duration))
                     .offset(
                         x: Theme.timeLabelWidth + 4,
                         y: yPosition(for: block.startTime)
@@ -189,16 +218,24 @@ struct ScheduleGridView: View {
                 let y = topPadding + CGFloat(minutes - startMinutes) * Theme.pointsPerMinute
                 let isHour = minutes % 60 == 0
 
-                // Grid line
+                // Grid line — solid for hours, dashed for half-hours
                 var path = Path()
                 path.move(to: CGPoint(x: Theme.timeLabelWidth, y: y))
                 path.addLine(to: CGPoint(x: size.width, y: y))
 
-                context.stroke(
-                    path,
-                    with: .color(Theme.gridLineColor.opacity(isHour ? 0.5 : 0.2)),
-                    lineWidth: isHour ? 1 : 0.5
-                )
+                if isHour {
+                    context.stroke(
+                        path,
+                        with: .color(Theme.gridLineColor.opacity(0.5)),
+                        lineWidth: 1
+                    )
+                } else {
+                    context.stroke(
+                        path,
+                        with: .color(Theme.gridLineColor.opacity(0.25)),
+                        style: StrokeStyle(lineWidth: 0.5, dash: [4, 4])
+                    )
+                }
 
                 // Time label at every hour mark (including the last one)
                 if isHour {
@@ -211,7 +248,7 @@ struct ScheduleGridView: View {
 
                     let text = Text(label)
                         .font(Theme.metadata)
-                        .foregroundStyle(Theme.textTertiary)
+                        .foregroundStyle(Theme.textSecondary)
                     context.draw(
                         context.resolve(text),
                         at: CGPoint(x: Theme.timeLabelWidth - 8, y: y),

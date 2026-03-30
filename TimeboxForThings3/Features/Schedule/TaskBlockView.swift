@@ -1,132 +1,155 @@
 import SwiftUI
 
-/// A task block rendered on the schedule grid, with move and resize gestures.
 struct TaskBlockView: View {
     let block: TimeBlock
     let taskItem: TaskItem?
     let onDelete: () -> Void
-    let onMove: (Int) -> Void       // New startTime in minutes
-    let onResize: (Int) -> Void     // New duration in minutes
+    let onMove: (Int) -> Void
+    let onResize: (Int, Int) -> Void
 
     @State private var isHovering = false
-    @State private var dragOffset: CGFloat = 0
-    @State private var resizeOffset: CGFloat = 0
+    @State private var dragMode: DragMode = .none
+    @State private var dragTranslation: CGFloat = 0
+    @Environment(\.textScale) private var textScale
+    @Environment(AppState.self) private var appState
 
-    private let minDuration = 15 // minutes
-    private let snapGrid = 15    // minutes
+    private let minDuration = 15
+    private let snapGrid = 15
+    private var ppm: CGFloat { Theme.pointsPerMinute }
+    private var blockHeight: CGFloat { CGFloat(block.duration) * ppm }
+    private var radius: CGFloat { min(8, blockHeight / 6) }
+    private var edgeZone: CGFloat { min(12, blockHeight / 4) }
+
+    private enum DragMode { case none, move, resizeTop, resizeBottom }
+
+    // Computed visual state during drag
+    private var visualOffset: CGFloat {
+        switch dragMode {
+        case .move: return dragTranslation
+        case .resizeTop: return min(dragTranslation, CGFloat(block.duration - minDuration) * ppm)
+        default: return 0
+        }
+    }
+
+    private var visualHeight: CGFloat {
+        switch dragMode {
+        case .resizeTop:
+            let delta = min(dragTranslation, CGFloat(block.duration - minDuration) * ppm)
+            return max(CGFloat(minDuration) * ppm, blockHeight - delta)
+        case .resizeBottom:
+            let delta = max(dragTranslation, -CGFloat(block.duration - minDuration) * ppm)
+            return max(CGFloat(minDuration) * ppm, blockHeight + delta)
+        default:
+            return blockHeight
+        }
+    }
 
     var body: some View {
-        let projectColor = taskItem?.projectUUID.map { ProjectColorGenerator.color(for: $0) } ?? .blue
+        let color = taskItem?.projectUUID.map { ProjectColorGenerator.color(for: $0) } ?? .gray
 
-        ZStack(alignment: .topLeading) {
-            // Background
-            RoundedRectangle(cornerRadius: 6)
-                .fill(projectColor.opacity(0.15))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 6)
-                        .strokeBorder(projectColor.opacity(0.4), lineWidth: 1)
-                )
-
-            // Left accent bar
-            HStack(spacing: 0) {
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(projectColor)
-                    .frame(width: 3)
-                    .padding(.vertical, 3)
-                Spacer()
-            }
-
+        RoundedRectangle(cornerRadius: radius)
+            .fill(color.opacity(0.25))
+            .overlay(
+                RoundedRectangle(cornerRadius: radius)
+                    .strokeBorder(color.opacity(0.5), lineWidth: 1)
+            )
             // Content
-            VStack(alignment: .leading, spacing: 2) {
-                Text(taskItem?.title ?? "Unknown Task")
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(Theme.textPrimary)
-                    .lineLimit(2)
+            .overlay(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(taskItem?.title ?? "Unknown Task")
+                        .font(.system(size: 12 * textScale, weight: .medium))
+                        .foregroundStyle(Theme.textPrimary)
+                        .lineLimit(block.duration <= 15 ? 1 : 2)
 
-                if let projectName = taskItem?.projectName {
-                    Text(projectName)
-                        .font(.system(size: 10))
+                    if block.duration > 30, let name = taskItem?.projectName {
+                        Text(name)
+                            .font(.system(size: 10 * textScale))
+                            .foregroundStyle(Theme.textSecondary)
+                            .lineLimit(1)
+                    }
+
+                    Text(block.timeRangeDisplay)
+                        .font(.system(size: 10 * textScale))
                         .foregroundStyle(Theme.textSecondary)
-                        .lineLimit(1)
                 }
-
-                Spacer(minLength: 0)
-
-                Text(block.timeRangeDisplay)
-                    .font(.system(size: 10))
-                    .foregroundStyle(Theme.textTertiary)
+                .padding(.horizontal, 8)
             }
-            .padding(.leading, 10)
-            .padding(.trailing, 24)
-            .padding(.vertical, 4)
-
-            // Delete button (top-right, on hover)
-            if isHovering {
-                VStack {
-                    HStack {
-                        Spacer()
-                        Button(action: onDelete) {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.system(size: 14))
-                                .foregroundStyle(Theme.textTertiary)
+            // Delete button — vertically centered
+            .overlay(alignment: .trailing) {
+                if isHovering && dragMode == .none {
+                    Button(action: onDelete) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 12))
+                            .foregroundStyle(Theme.textTertiary)
+                    }
+                    .buttonStyle(.plain).padding(.trailing, 4)
+                }
+            }
+            // Selection border
+            .overlay {
+                if appState.selectedBlockID == block.id {
+                    RoundedRectangle(cornerRadius: radius)
+                        .strokeBorder(Color.accentColor, lineWidth: 2)
+                }
+            }
+            .frame(height: visualHeight)
+            .offset(y: visualOffset)
+            .onHover { hovering in
+                isHovering = hovering
+                if !hovering { NSCursor.arrow.set() }
+            }
+            .onContinuousHover { phase in
+                guard dragMode == .none else { return }
+                switch phase {
+                case .active(let loc):
+                    let inTopEdge = loc.y < edgeZone
+                    let inBottomEdge = loc.y > blockHeight - edgeZone
+                    let inXButton = loc.x > blockHeight - 24 && loc.y < 20 // approx X area
+                    if (inTopEdge || inBottomEdge) && !inXButton {
+                        NSCursor.resizeUpDown.set()
+                    } else {
+                        NSCursor.arrow.set()
+                    }
+                case .ended:
+                    NSCursor.arrow.set()
+                }
+            }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                appState.selectedBlockID = appState.selectedBlockID == block.id ? nil : block.id
+            }
+            .gesture(
+                DragGesture(minimumDistance: 3)
+                    .onChanged { value in
+                        if dragMode == .none {
+                            // Determine mode from start location
+                            let startY = value.startLocation.y
+                            if startY < edgeZone {
+                                dragMode = .resizeTop
+                            } else if startY > blockHeight - edgeZone {
+                                dragMode = .resizeBottom
+                            } else {
+                                dragMode = .move
+                            }
                         }
-                        .buttonStyle(.plain)
-                        .padding(4)
+                        dragTranslation = value.translation.height
                     }
-                    Spacer()
-                }
-            }
-
-            // Bottom resize handle
-            VStack {
-                Spacer()
-                Rectangle()
-                    .fill(Color.clear)
-                    .frame(height: 8)
-                    .contentShape(Rectangle())
-                    .onHover { inside in
-                        if inside { NSCursor.resizeUpDown.push() } else { NSCursor.pop() }
+                    .onEnded { value in
+                        let mins = (Int(value.translation.height / ppm) / snapGrid) * snapGrid
+                        switch dragMode {
+                        case .move:
+                            onMove(max(0, block.startTime + mins))
+                        case .resizeTop:
+                            let d = min(mins, block.duration - minDuration)
+                            onResize(max(0, block.startTime + d), max(minDuration, block.duration - d))
+                        case .resizeBottom:
+                            onResize(block.startTime, max(minDuration, block.duration + mins))
+                        case .none:
+                            break
+                        }
+                        dragMode = .none
+                        dragTranslation = 0
                     }
-                    .gesture(resizeGesture)
-            }
-        }
-        .offset(y: dragOffset)
-        .onHover { hovering in
-            isHovering = hovering
-        }
-        .contentShape(Rectangle())
-        .gesture(moveGesture)
-    }
-
-    // MARK: - Move gesture (drag the block body)
-
-    private var moveGesture: some Gesture {
-        DragGesture()
-            .onChanged { value in
-                dragOffset = value.translation.height
-            }
-            .onEnded { value in
-                let minutesDelta = Int(value.translation.height / Theme.pointsPerMinute)
-                let snappedDelta = (minutesDelta / snapGrid) * snapGrid
-                let newStart = max(0, block.startTime + snappedDelta)
-                dragOffset = 0
-                onMove(newStart)
-            }
-    }
-
-    // MARK: - Resize gesture (drag bottom edge)
-
-    private var resizeGesture: some Gesture {
-        DragGesture()
-            .onChanged { value in
-                resizeOffset = value.translation.height
-            }
-            .onEnded { value in
-                let minutesDelta = Int(value.translation.height / Theme.pointsPerMinute)
-                let snappedDelta = (minutesDelta / snapGrid) * snapGrid
-                let newDuration = max(minDuration, block.duration + snappedDelta)
-                resizeOffset = 0
-                onResize(newDuration)
-            }
+            )
     }
 }

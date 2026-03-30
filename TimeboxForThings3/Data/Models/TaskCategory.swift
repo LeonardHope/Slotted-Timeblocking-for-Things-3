@@ -1,9 +1,9 @@
 import Foundation
 
 /// Categories matching Things 3's built-in lists.
+/// See: https://culturedcode.com/things/support/articles/4001304/
 enum TaskCategory: Int, CaseIterable, Identifiable {
     case inbox
-    case overdue
     case today
     case upcoming
     case anytime
@@ -14,7 +14,6 @@ enum TaskCategory: Int, CaseIterable, Identifiable {
     var displayName: String {
         switch self {
         case .inbox: "Inbox"
-        case .overdue: "Overdue"
         case .today: "Today"
         case .upcoming: "Upcoming"
         case .anytime: "Anytime"
@@ -23,40 +22,43 @@ enum TaskCategory: Int, CaseIterable, Identifiable {
     }
 }
 
+/// Categorizes tasks using Things 3's rules:
+/// - startDate takes priority over the start field
+/// - A task with a future startDate is always Upcoming, even if start=2
+/// - A task with startDate <= today or deadline <= today is Today
+/// - Inbox: start=0
+/// - Someday: start=2 with no startDate
+/// - Anytime: start=1 with no startDate and no past deadline
 enum TaskCategorizer {
     static func categorize(_ task: TaskItem, referenceDate: Date = .now) -> TaskCategory {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: referenceDate)
 
-        // Inbox: start == 0
+        // Inbox: unprocessed tasks
         if task.startValue == 0 { return .inbox }
 
-        // Someday: start == 2
-        if task.startValue == 2 { return .someday }
-
-        // start == 1 (Anytime)
-
-        // Overdue: deadline is before today
-        if let deadline = task.deadline, calendar.startOfDay(for: deadline) < today {
-            return .overdue
-        }
-
-        // Today: startDate is today, or todayIndex is set
+        // startDate takes priority over start field
         if let startDate = task.startDate {
             let start = calendar.startOfDay(for: startDate)
-            if start <= today {
-                return .today
+            if start > today {
+                return .upcoming
             }
-            // Future startDate → Upcoming
-            return .upcoming
-        }
-
-        // No startDate but has todayIndex → Today
-        if task.todayIndex >= 0 {
+            // startDate is today or earlier → Today
             return .today
         }
 
-        // Anytime: no date, not in Today
+        // No startDate — check deadline
+        if let deadline = task.deadline {
+            let dl = calendar.startOfDay(for: deadline)
+            if dl <= today {
+                return .today
+            }
+        }
+
+        // No startDate, no past deadline — use start field
+        if task.startValue == 2 { return .someday }
+
+        // start=1, no dates → Anytime
         return .anytime
     }
 
@@ -65,6 +67,10 @@ enum TaskCategorizer {
         for task in tasks {
             let category = categorize(task, referenceDate: referenceDate)
             groups[category, default: []].append(task)
+        }
+        // Things 3 behavior: Anytime includes Today tasks (shown with a star in Things)
+        if let todayTasks = groups[.today], !todayTasks.isEmpty {
+            groups[.anytime, default: []].insert(contentsOf: todayTasks, at: 0)
         }
         return TaskCategory.allCases.compactMap { category in
             guard let tasks = groups[category], !tasks.isEmpty else { return nil }

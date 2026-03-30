@@ -30,6 +30,22 @@ struct SettingsView: View {
                 }
             }
 
+            Section("Text Size") {
+                HStack(spacing: 8) {
+                    Text("A")
+                        .font(.system(size: 10))
+                        .foregroundStyle(.secondary)
+                    Slider(value: $state.textScale, in: 0.8...1.4, step: 0.05)
+                    Text("A")
+                        .font(.system(size: 18))
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            Section("Task List") {
+                Toggle("Hide empty categories", isOn: $state.hideEmptyCategories)
+            }
+
             Section("Appearance") {
                 Picker("Theme", selection: $state.appearanceMode) {
                     ForEach(appearanceOptions, id: \.1) { label, mode in

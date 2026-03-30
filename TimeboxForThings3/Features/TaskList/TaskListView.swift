@@ -7,14 +7,6 @@ struct TaskListView: View {
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 0) {
-                // Header
-                HStack {
-                    Text("Tasks")
-                        .font(Theme.pageTitle)
-                    Spacer()
-                }
-                .padding(.horizontal, Theme.taskRowHorizontalPadding)
-                .padding(.bottom, 12)
 
                 if appState.taskProvider.isLoading {
                     ProgressView("Loading Things 3...")
@@ -37,17 +29,30 @@ struct TaskListView: View {
                         .foregroundStyle(Theme.textSecondary)
                         .frame(maxWidth: .infinity, minHeight: 100)
                 } else {
-                    let grouped = TaskCategorizer.groupByCategory(appState.taskProvider.tasks)
-                    ForEach(grouped, id: \.category) { group in
-                        TaskCategorySection(
-                            category: group.category,
-                            tasks: group.tasks
-                        )
+                    // Filter out tasks that are already scheduled on the RHS
+                    let scheduled = appState.scheduledTaskUUIDs
+                    let unscheduled = appState.taskProvider.tasks.filter { !scheduled.contains($0.id) }
+                    let grouped = TaskCategorizer.groupByCategory(unscheduled)
+                    if appState.hideEmptyCategories {
+                        ForEach(grouped, id: \.category) { group in
+                            TaskCategorySection(
+                                category: group.category,
+                                tasks: group.tasks
+                            )
+                        }
+                    } else {
+                        ForEach(TaskCategory.allCases) { category in
+                            let tasks = grouped.first(where: { $0.category == category })?.tasks ?? []
+                            TaskCategorySection(
+                                category: category,
+                                tasks: tasks
+                            )
+                        }
                     }
                 }
             }
             .padding(.vertical, 16)
         }
-        .background(Theme.contentBackground)
+        .background(Theme.listBackground)
     }
 }
