@@ -41,18 +41,22 @@ final class AppState {
     var hideEmptyCategories: Bool {
         didSet { UserDefaults.standard.set(hideEmptyCategories, forKey: "hideEmptyCategories") }
     }
+    var showDates: Bool {
+        didSet { UserDefaults.standard.set(showDates, forKey: "showDates") }
+    }
 
     init() {
         self.taskProvider = Things3Provider()
 
         let defaults = UserDefaults.standard
-        defaults.register(defaults: ["startHour": 9, "endHour": 17, "appearanceMode": 0, "textScale": 1.0, "hideEmptyCategories": true])
+        defaults.register(defaults: ["startHour": 9, "endHour": 17, "appearanceMode": 0, "textScale": 1.0, "hideEmptyCategories": true, "showDates": true])
 
         self.startHour = defaults.integer(forKey: "startHour")
         self.endHour = defaults.integer(forKey: "endHour")
         self.appearanceMode = AppearanceMode(rawValue: defaults.integer(forKey: "appearanceMode")) ?? .auto
         self.textScale = defaults.double(forKey: "textScale")
         self.hideEmptyCategories = defaults.bool(forKey: "hideEmptyCategories")
+        self.showDates = defaults.bool(forKey: "showDates")
         if self.textScale == 0 { self.textScale = 1.0 }
     }
 

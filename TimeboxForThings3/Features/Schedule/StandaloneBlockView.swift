@@ -11,6 +11,7 @@ struct StandaloneBlockView: View {
     @State private var isHovering = false
     @State private var isEditing = false
     @State private var editTitle = ""
+    @FocusState private var textFieldFocused: Bool
     @State private var dragMode: DragMode = .none
     @State private var dragTranslation: CGFloat = 0
     @Environment(\.textScale) private var textScale
@@ -64,10 +65,18 @@ struct StandaloneBlockView: View {
                     }.buttonStyle(.plain)
 
                     if isEditing {
-                        TextField("Title", text: $editTitle, onCommit: {
-                            onTitleChange(editTitle); isEditing = false
-                        })
-                        .textFieldStyle(.plain).font(.system(size: 12 * textScale))
+                        TextField("Title", text: $editTitle)
+                            .textFieldStyle(.plain)
+                            .font(.system(size: 12 * textScale))
+                            .focused($textFieldFocused)
+                            .onSubmit { onTitleChange(editTitle); isEditing = false }
+                            .onExitCommand { onTitleChange(editTitle); isEditing = false }
+                            .onChange(of: textFieldFocused) {
+                                if !textFieldFocused && isEditing {
+                                    onTitleChange(editTitle); isEditing = false
+                                }
+                            }
+                            .onAppear { textFieldFocused = true }
                     } else {
                         Text(block.title)
                             .font(.system(size: 12 * textScale)).italic()

@@ -8,7 +8,6 @@ struct ScheduleGridView: View {
     private let bottomPadding: CGFloat = 20
     @State private var dropTargeted = false
     @State private var dropLocation: CGPoint?
-    @FocusState private var isFocused: Bool
 
     var body: some View {
         VStack(spacing: 0) {
@@ -47,32 +46,6 @@ struct ScheduleGridView: View {
             }
         }
         .background(Theme.contentBackground)
-        .focused($isFocused)
-        .focusEffectDisabled()
-        .onChange(of: appState.selectedBlockID) {
-            if appState.selectedBlockID != nil { isFocused = true }
-        }
-        .onKeyPress(.upArrow) {
-            moveSelectedBlock(by: -15)
-            return .handled
-        }
-        .onKeyPress(.downArrow) {
-            moveSelectedBlock(by: 15)
-            return .handled
-        }
-    }
-
-    private func moveSelectedBlock(by minutes: Int) {
-        guard let selectedID = appState.selectedBlockID,
-              let store = appState.scheduleStore else { return }
-
-        if var block = store.timeBlocks.first(where: { $0.id == selectedID }) {
-            block.startTime = max(0, block.startTime + minutes)
-            try? store.updateTimeBlock(block)
-        } else if var block = store.standaloneBlocks.first(where: { $0.id == selectedID }) {
-            block.startTime = max(0, block.startTime + minutes)
-            try? store.updateStandaloneBlock(block)
-        }
     }
 
     // MARK: - Layout calculations

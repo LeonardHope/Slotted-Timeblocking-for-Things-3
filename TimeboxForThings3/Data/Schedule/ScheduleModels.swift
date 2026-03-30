@@ -1,35 +1,30 @@
 import Foundation
 import GRDB
 
+private func format12Hour(_ totalMinutes: Int) -> String {
+    let h = totalMinutes / 60
+    let m = totalMinutes % 60
+    let period = h >= 12 ? "pm" : "am"
+    let hour12 = h == 0 ? 12 : (h > 12 ? h - 12 : h)
+    return m == 0 ? "\(hour12)\(period)" : "\(hour12):\(String(format: "%02d", m))\(period)"
+}
+
 /// A task scheduled on the time grid.
 struct TimeBlock: Identifiable, Hashable, Codable, FetchableRecord, PersistableRecord {
     var id: String
     var taskUUID: String
-    var date: String        // ISO date: "2026-03-30"
-    var startTime: Int      // Minutes from midnight (e.g., 540 = 9:00 AM)
-    var duration: Int       // Duration in minutes
+    var date: String
+    var startTime: Int
+    var duration: Int
     var createdAt: Double
     var updatedAt: Double
 
     static let databaseTableName = "timeBlock"
 
-    /// Start time as hours and minutes.
-    var startComponents: (hour: Int, minute: Int) {
-        (startTime / 60, startTime % 60)
-    }
-
-    /// End time in minutes from midnight.
     var endTime: Int { startTime + duration }
 
-    var endComponents: (hour: Int, minute: Int) {
-        (endTime / 60, endTime % 60)
-    }
-
-    /// Display string like "9:00 – 9:30"
     var timeRangeDisplay: String {
-        let (sh, sm) = startComponents
-        let (eh, em) = endComponents
-        return String(format: "%d:%02d – %d:%02d", sh, sm, eh, em)
+        "\(format12Hour(startTime)) – \(format12Hour(endTime))"
     }
 }
 
@@ -37,28 +32,18 @@ struct TimeBlock: Identifiable, Hashable, Codable, FetchableRecord, PersistableR
 struct StandaloneBlock: Identifiable, Hashable, Codable, FetchableRecord, PersistableRecord {
     var id: String
     var title: String
-    var date: String        // ISO date
-    var startTime: Int      // Minutes from midnight
-    var duration: Int       // Duration in minutes
-    var colorIndex: Int     // Index into a color palette
+    var date: String
+    var startTime: Int
+    var duration: Int
+    var colorIndex: Int
     var createdAt: Double
     var updatedAt: Double
 
     static let databaseTableName = "standaloneBlock"
 
-    var startComponents: (hour: Int, minute: Int) {
-        (startTime / 60, startTime % 60)
-    }
-
     var endTime: Int { startTime + duration }
 
-    var endComponents: (hour: Int, minute: Int) {
-        (endTime / 60, endTime % 60)
-    }
-
     var timeRangeDisplay: String {
-        let (sh, sm) = startComponents
-        let (eh, em) = endComponents
-        return String(format: "%d:%02d – %d:%02d", sh, sm, eh, em)
+        "\(format12Hour(startTime)) – \(format12Hour(endTime))"
     }
 }

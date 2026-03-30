@@ -5,14 +5,53 @@ struct ContentView: View {
 
     var body: some View {
         NavigationSplitView {
-            // LHS — Task List (sidebar)
             TaskListView()
         } detail: {
-            // RHS — Schedule Grid
             ScheduleGridView()
+        }
+        .focusable()
+        .focusEffectDisabled()
+        .onKeyPress(.upArrow) {
+            moveSelectedBlock(by: -15)
+        }
+        .onKeyPress(.downArrow) {
+            moveSelectedBlock(by: 15)
+        }
+        .onKeyPress(.delete) {
+            deleteSelectedBlock()
         }
         .task {
             await appState.initialize()
         }
+    }
+
+    private func moveSelectedBlock(by minutes: Int) -> KeyPress.Result {
+        guard let id = appState.selectedBlockID, let store = appState.scheduleStore else { return .ignored }
+
+        if var block = store.timeBlocks.first(where: { $0.id == id }) {
+            block.startTime = max(0, block.startTime + minutes)
+            try? store.updateTimeBlock(block)
+            return .handled
+        } else if var block = store.standaloneBlocks.first(where: { $0.id == id }) {
+            block.startTime = max(0, block.startTime + minutes)
+            try? store.updateStandaloneBlock(block)
+            return .handled
+        }
+        return .ignored
+    }
+
+    private func deleteSelectedBlock() -> KeyPress.Result {
+        guard let id = appState.selectedBlockID, let store = appState.scheduleStore else { return .ignored }
+
+        if store.timeBlocks.contains(where: { $0.id == id }) {
+            try? store.deleteTimeBlock(id: id)
+            appState.selectedBlockID = nil
+            return .handled
+        } else if store.standaloneBlocks.contains(where: { $0.id == id }) {
+            try? store.deleteStandaloneBlock(id: id)
+            appState.selectedBlockID = nil
+            return .handled
+        }
+        return .ignored
     }
 }

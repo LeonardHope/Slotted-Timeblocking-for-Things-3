@@ -44,6 +44,7 @@ struct SettingsView: View {
 
             Section("Task List") {
                 Toggle("Hide empty categories", isOn: $state.hideEmptyCategories)
+                Toggle("Show deadlines", isOn: $state.showDates)
             }
 
             Section("Appearance") {

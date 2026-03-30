@@ -11,6 +11,7 @@
 		09C26C16084B32074889D31E /* TaskListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BC4D4127059F575EDAEEDD /* TaskListView.swift */; };
 		0D3BAC6A02D280499E798665 /* Things3Provider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC5494FBBB37E5CA1615C28 /* Things3Provider.swift */; };
 		0E5CD905FB1B651F35A2A0A6 /* ScheduleGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79780AA7AE3AAD4F7FF5CAA /* ScheduleGridView.swift */; };
+		1004C8F29E7309C0050D97A4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E65AEF1CAAEC7BC8CAF20844 /* Assets.xcassets */; };
 		2574A949F028298A0FED8D1E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BA94C00C181EA4535BB219 /* ContentView.swift */; };
 		2D942CCE7984B97213D1419D /* StandaloneBlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B96EF5B317240E4DACB0 /* StandaloneBlockView.swift */; };
 		33B7DF425CDD0100502869BA /* DragDropCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE2194AC270FC42C75E6A629 /* DragDropCoordinator.swift */; };
@@ -83,6 +84,7 @@
 		E0BA94C00C181EA4535BB219 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		E1C72B7DFA2B59EC5D2946A2 /* ScheduleMigrations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleMigrations.swift; sourceTree = "<group>"; };
 		E38604FB91226D9A03FA0C37 /* PreviewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewData.swift; sourceTree = "<group>"; };
+		E65AEF1CAAEC7BC8CAF20844 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F200FE713F4A63DD87711ACA /* ScheduleModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleModels.swift; sourceTree = "<group>"; };
 		F7DCEBEDE61AA69E08DF5395 /* Things3Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Things3Database.swift; sourceTree = "<group>"; };
 		F9B3F2746FB31C68CFCD1659 /* TaskRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRowView.swift; sourceTree = "<group>"; };
@@ -175,6 +177,7 @@
 		6DC9AA58C13027D487C0CBC4 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				E65AEF1CAAEC7BC8CAF20844 /* Assets.xcassets */,
 				1380041A7F0B046E373D7EC4 /* Info.plist */,
 			);
 			path = Resources;
@@ -286,6 +289,7 @@
 			buildConfigurationList = C0B7E22497D9EA9982D1C665 /* Build configuration list for PBXNativeTarget "TimeboxForThings3" */;
 			buildPhases = (
 				C704740E1B81D1BC709495CA /* Sources */,
+				7E950F04330BFDBD2EEC7018 /* Resources */,
 				566608233AEF8FADE86B4BF4 /* Frameworks */,
 			);
 			buildRules = (
@@ -333,6 +337,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		7E950F04330BFDBD2EEC7018 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1004C8F29E7309C0050D97A4 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		87DAF862CCDA28A03AE7C6ED /* Sources */ = {

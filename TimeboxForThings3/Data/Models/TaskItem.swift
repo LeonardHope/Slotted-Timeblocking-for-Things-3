@@ -45,4 +45,18 @@ struct TaskItem: Identifiable, Hashable {
             return formatter.string(from: deadline)
         }
     }
+
+    /// Display text for the most relevant date — deadline takes priority, then start date.
+    var dateDisplayText: String? {
+        if let text = deadlineDisplayText { return text }
+        guard let startDate else { return nil }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM d"
+        return formatter.string(from: startDate)
+    }
+
+    /// Whether the displayed date is a deadline (vs a start date).
+    var displayedDateIsDeadline: Bool {
+        deadline != nil
+    }
 }

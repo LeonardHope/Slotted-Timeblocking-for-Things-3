@@ -8,8 +8,13 @@ struct SummaryBarView: View {
     var body: some View {
         HStack(spacing: 16) {
             // Date
-            Text(dateString)
-                .font(Theme.pageTitle)
+            HStack(spacing: 8) {
+                Image(systemName: "calendar")
+                    .font(.system(size: 18))
+                    .foregroundStyle(Theme.upcomingRed)
+                Text(dateString)
+                    .font(Theme.pageTitle)
+            }
 
             Spacer()
 

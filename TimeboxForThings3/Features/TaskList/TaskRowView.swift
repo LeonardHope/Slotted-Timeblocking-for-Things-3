@@ -6,6 +6,7 @@ struct TaskRowView: View {
     let task: TaskItem
     @State private var isHovering = false
     @Environment(\.textScale) private var textScale
+    @Environment(AppState.self) private var appState
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
@@ -20,10 +21,15 @@ struct TaskRowView: View {
 
             Spacer()
 
-            if let deadlineText = task.deadlineDisplayText {
-                Text(deadlineText)
-                    .font(Theme.metadata(scale: textScale))
-                    .foregroundStyle(task.isOverdue ? Theme.overdueRed : Theme.textTertiary)
+            if appState.showDates, let deadlineText = task.deadlineDisplayText {
+                HStack(spacing: 3) {
+                    Image(systemName: "calendar")
+                        .font(.system(size: 10 * textScale))
+                        .foregroundStyle(Theme.upcomingRed)
+                    Text(deadlineText)
+                        .font(Theme.metadata(scale: textScale))
+                        .foregroundStyle(task.isOverdue ? Theme.overdueRed : Theme.textSecondary)
+                }
             }
         }
         .padding(.horizontal, Theme.taskRowHorizontalPadding)
