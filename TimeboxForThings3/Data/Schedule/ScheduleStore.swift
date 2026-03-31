@@ -129,6 +129,19 @@ final class ScheduleStore {
         standaloneBlocks.removeAll { $0.id == id }
     }
 
+    // MARK: - Clear
+
+    /// Remove all blocks for a given date.
+    func clearBlocks(for date: Date) throws {
+        let dateString = Self.isoDateString(from: date)
+        try dbPool.write { db in
+            try TimeBlock.filter(Column("date") == dateString).deleteAll(db)
+            try StandaloneBlock.filter(Column("date") == dateString).deleteAll(db)
+        }
+        timeBlocks.removeAll()
+        standaloneBlocks.removeAll()
+    }
+
     // MARK: - Helpers
 
     static func isoDateString(from date: Date) -> String {

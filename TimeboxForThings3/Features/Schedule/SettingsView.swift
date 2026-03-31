@@ -47,6 +47,10 @@ struct SettingsView: View {
                 Toggle("Show deadlines", isOn: $state.showDates)
             }
 
+            Section("Schedule") {
+                Toggle("Clear schedule at midnight", isOn: $state.clearAtMidnight)
+            }
+
             Section("Appearance") {
                 Picker("Theme", selection: $state.appearanceMode) {
                     ForEach(appearanceOptions, id: \.1) { label, mode in

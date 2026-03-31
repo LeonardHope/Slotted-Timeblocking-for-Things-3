@@ -44,12 +44,15 @@ final class AppState {
     var showDates: Bool {
         didSet { UserDefaults.standard.set(showDates, forKey: "showDates") }
     }
+    var clearAtMidnight: Bool {
+        didSet { UserDefaults.standard.set(clearAtMidnight, forKey: "clearAtMidnight") }
+    }
 
     init() {
         self.taskProvider = Things3Provider()
 
         let defaults = UserDefaults.standard
-        defaults.register(defaults: ["startHour": 9, "endHour": 17, "appearanceMode": 0, "textScale": 1.0, "hideEmptyCategories": true, "showDates": true])
+        defaults.register(defaults: ["startHour": 9, "endHour": 17, "appearanceMode": 0, "textScale": 1.0, "hideEmptyCategories": true, "showDates": true, "clearAtMidnight": true])
 
         self.startHour = defaults.integer(forKey: "startHour")
         self.endHour = defaults.integer(forKey: "endHour")
@@ -57,6 +60,7 @@ final class AppState {
         self.textScale = defaults.double(forKey: "textScale")
         self.hideEmptyCategories = defaults.bool(forKey: "hideEmptyCategories")
         self.showDates = defaults.bool(forKey: "showDates")
+        self.clearAtMidnight = defaults.bool(forKey: "clearAtMidnight")
         if self.textScale == 0 { self.textScale = 1.0 }
     }
 
@@ -81,7 +85,11 @@ final class AppState {
             queue: .main
         ) { [weak self] _ in
             Task { @MainActor [weak self] in
-                await self?.changeDate(to: .now)
+                guard let self else { return }
+                if self.clearAtMidnight {
+                    try? self.scheduleStore?.clearBlocks(for: self.selectedDate)
+                }
+                await self.changeDate(to: .now)
             }
         }
     }
