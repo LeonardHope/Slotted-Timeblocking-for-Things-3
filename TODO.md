@@ -26,6 +26,14 @@
 - Tasks without an area/project go under a default "No Area" group
 - Matches how Things 3 organizes its sidebar
 
+## Calendar Integration
+- Import events from the user's macOS calendar and show as blocks on the RHS
+- Calendar events block out time, preventing task scheduling over meetings
+- User-controlled setting to enable/disable
+- Use EventKit framework (requires calendar access permission)
+- Consider: which calendars to show, read-only vs editable, visual style for calendar blocks vs task blocks
+- Auto-refresh when calendar changes
+
 ## iCloud Sync Polish
 - Persist server record cache to disk to avoid "record already exists" errors on app restart
 - Currently self-healing (retry succeeds) but logs noisy errors in console
