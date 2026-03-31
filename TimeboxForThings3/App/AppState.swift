@@ -119,14 +119,17 @@ final class AppState {
     private func startSyncEngine() async {
         guard let store = scheduleStore else { return }
         do {
-            let engine = try ScheduleSyncEngine(store: store)
-            await engine.ensureZoneExists()
-            // On first launch with sync, push all existing records
-            if !UserDefaults.standard.bool(forKey: "hasPerformedInitialSync") {
+            // On first sync, clear stale state and zone before creating engine
+            if !UserDefaults.standard.bool(forKey: "hasPerformedInitialSyncV2") {
+                await ScheduleSyncEngine.resetZoneAndState()
+                let engine = try ScheduleSyncEngine(store: store)
                 engine.pushAllExistingRecords()
-                UserDefaults.standard.set(true, forKey: "hasPerformedInitialSync")
+                UserDefaults.standard.set(true, forKey: "hasPerformedInitialSyncV2")
+                syncEngine = engine
+            } else {
+                let engine = try ScheduleSyncEngine(store: store)
+                syncEngine = engine
             }
-            syncEngine = engine
         } catch {
             self.error = error
         }
