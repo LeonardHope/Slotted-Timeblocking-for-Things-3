@@ -34,6 +34,11 @@
 - Consider: which calendars to show, read-only vs editable, visual style for calendar blocks vs task blocks
 - Auto-refresh when calendar changes
 
+## App Icon Update
+- Adjust clock hands: little hand on 10, big hand on 2
+- This creates a checkmark shape that mirrors the check in the Things 3 icon
+- Subtle nod to Things 3 while keeping the clock/timebox concept
+
 ## iCloud Sync Polish
 - Persist server record cache to disk to avoid "record already exists" errors on app restart
 - Currently self-healing (retry succeeds) but logs noisy errors in console
