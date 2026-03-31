@@ -104,10 +104,15 @@ final class AppState {
         ) { [weak self] _ in
             Task { @MainActor [weak self] in
                 guard let self else { return }
+                let today = Date.now
+                let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: today)!
                 if self.clearAtMidnight {
-                    try? self.scheduleStore?.clearBlocks(for: self.selectedDate)
+                    try? self.scheduleStore?.clearBlocks(for: yesterday)
+                } else {
+                    // Copy yesterday's blocks to today so recurring blocks carry forward
+                    try? self.scheduleStore?.copyBlocks(from: yesterday, to: today)
                 }
-                await self.changeDate(to: .now)
+                await self.changeDate(to: today)
             }
         }
     }

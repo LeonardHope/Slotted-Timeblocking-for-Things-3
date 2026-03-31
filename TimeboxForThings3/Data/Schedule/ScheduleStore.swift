@@ -165,6 +165,38 @@ final class ScheduleStore {
         for id in sbIDs { notifyDeleted(id, "StandaloneBlock") }
     }
 
+    /// Copy all blocks from one date to another (for carrying blocks into the next day).
+    func copyBlocks(from sourceDate: Date, to targetDate: Date) throws {
+        let sourceDateString = Self.isoDateString(from: sourceDate)
+        let targetDateString = Self.isoDateString(from: targetDate)
+        let now = Date().timeIntervalSince1970
+
+        let sourceTimeBlocks = try dbPool.read { db in
+            try TimeBlock.filter(Column("date") == sourceDateString).fetchAll(db)
+        }
+        let sourceStandaloneBlocks = try dbPool.read { db in
+            try StandaloneBlock.filter(Column("date") == sourceDateString).fetchAll(db)
+        }
+
+        for var block in sourceTimeBlocks {
+            block.id = UUID().uuidString
+            block.date = targetDateString
+            block.createdAt = now
+            block.updatedAt = now
+            try dbPool.write { db in try block.insert(db) }
+            notifySaved(block)
+        }
+
+        for var block in sourceStandaloneBlocks {
+            block.id = UUID().uuidString
+            block.date = targetDateString
+            block.createdAt = now
+            block.updatedAt = now
+            try dbPool.write { db in try block.insert(db) }
+            notifySaved(block)
+        }
+    }
+
     // MARK: - Upsert (for sync engine applying remote changes)
 
     func upsertTimeBlock(_ block: TimeBlock) throws {
