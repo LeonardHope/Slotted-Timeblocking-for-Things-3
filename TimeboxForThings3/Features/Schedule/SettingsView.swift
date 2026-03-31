@@ -51,6 +51,10 @@ struct SettingsView: View {
                 Toggle("Clear schedule at midnight", isOn: $state.clearAtMidnight)
             }
 
+            Section("Sync") {
+                Toggle("iCloud Sync", isOn: $state.iCloudSyncEnabled)
+            }
+
             Section("Appearance") {
                 Picker("Theme", selection: $state.appearanceMode) {
                     ForEach(appearanceOptions, id: \.1) { label, mode in
