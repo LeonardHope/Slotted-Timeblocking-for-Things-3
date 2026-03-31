@@ -1,14 +1,24 @@
 import Foundation
+import CloudKit
 import GRDB
+
+/// Notification sent when local records change and need syncing.
+enum SyncChange: Sendable {
+    case saved(CKRecord.ID, String)    // recordID, recordType
+    case deleted(CKRecord.ID, String)  // recordID, recordType
+}
 
 /// Manages the app's own SQLite database for schedule persistence.
 @Observable
 @MainActor
 final class ScheduleStore {
-    private let dbPool: DatabasePool
+    let dbPool: DatabasePool
 
-    private(set) var timeBlocks: [TimeBlock] = []
-    private(set) var standaloneBlocks: [StandaloneBlock] = []
+    var timeBlocks: [TimeBlock] = []
+    var standaloneBlocks: [StandaloneBlock] = []
+
+    /// Called when a local write happens, so the sync engine can push changes.
+    var onSyncChange: ((SyncChange) -> Void)?
 
     init() throws {
         let url = try Self.databaseURL()
@@ -26,6 +36,7 @@ final class ScheduleStore {
 
     func loadBlocks(for date: Date) async throws {
         let dateString = Self.isoDateString(from: date)
+        currentDateString = dateString
         let (time, standalone) = try await dbPool.read { db in
             let timeBlocks = try TimeBlock
                 .filter(Column("date") == dateString)
@@ -46,7 +57,7 @@ final class ScheduleStore {
     @discardableResult
     func addTimeBlock(taskUUID: String, date: Date, startTime: Int, duration: Int = 30) throws -> TimeBlock {
         let now = Date().timeIntervalSince1970
-        var block = TimeBlock(
+        let block = TimeBlock(
             id: UUID().uuidString,
             taskUUID: taskUUID,
             date: Self.isoDateString(from: date),
@@ -60,6 +71,7 @@ final class ScheduleStore {
         }
         timeBlocks.append(block)
         timeBlocks.sort { $0.startTime < $1.startTime }
+        notifySaved(block)
         return block
     }
 
@@ -72,20 +84,24 @@ final class ScheduleStore {
         if let index = timeBlocks.firstIndex(where: { $0.id == block.id }) {
             timeBlocks[index] = updated
         }
+        notifySaved(updated)
     }
 
     func deleteTimeBlock(id: String) throws {
-        try dbPool.write { db in
+        _ = try dbPool.write { db in
             try TimeBlock.deleteOne(db, key: id)
         }
         timeBlocks.removeAll { $0.id == id }
+        notifyDeleted(id, "TimeBlock")
     }
 
     func deleteTimeBlocks(forTaskUUID uuid: String) throws {
-        try dbPool.write { db in
+        let ids = timeBlocks.filter { $0.taskUUID == uuid }.map(\.id)
+        _ = try dbPool.write { db in
             try TimeBlock.filter(Column("taskUUID") == uuid).deleteAll(db)
         }
         timeBlocks.removeAll { $0.taskUUID == uuid }
+        for id in ids { notifyDeleted(id, "TimeBlock") }
     }
 
     // MARK: - Standalone Blocks
@@ -93,7 +109,7 @@ final class ScheduleStore {
     @discardableResult
     func addStandaloneBlock(title: String = "Untitled", date: Date, startTime: Int, duration: Int = 30, colorIndex: Int = 0) throws -> StandaloneBlock {
         let now = Date().timeIntervalSince1970
-        var block = StandaloneBlock(
+        let block = StandaloneBlock(
             id: UUID().uuidString,
             title: title,
             date: Self.isoDateString(from: date),
@@ -108,6 +124,7 @@ final class ScheduleStore {
         }
         standaloneBlocks.append(block)
         standaloneBlocks.sort { $0.startTime < $1.startTime }
+        notifySaved(block)
         return block
     }
 
@@ -120,13 +137,15 @@ final class ScheduleStore {
         if let index = standaloneBlocks.firstIndex(where: { $0.id == block.id }) {
             standaloneBlocks[index] = updated
         }
+        notifySaved(updated)
     }
 
     func deleteStandaloneBlock(id: String) throws {
-        try dbPool.write { db in
+        _ = try dbPool.write { db in
             try StandaloneBlock.deleteOne(db, key: id)
         }
         standaloneBlocks.removeAll { $0.id == id }
+        notifyDeleted(id, "StandaloneBlock")
     }
 
     // MARK: - Clear
@@ -134,12 +153,74 @@ final class ScheduleStore {
     /// Remove all blocks for a given date.
     func clearBlocks(for date: Date) throws {
         let dateString = Self.isoDateString(from: date)
+        let tbIDs = timeBlocks.map(\.id)
+        let sbIDs = standaloneBlocks.map(\.id)
         try dbPool.write { db in
             try TimeBlock.filter(Column("date") == dateString).deleteAll(db)
             try StandaloneBlock.filter(Column("date") == dateString).deleteAll(db)
         }
         timeBlocks.removeAll()
         standaloneBlocks.removeAll()
+        for id in tbIDs { notifyDeleted(id, "TimeBlock") }
+        for id in sbIDs { notifyDeleted(id, "StandaloneBlock") }
+    }
+
+    // MARK: - Upsert (for sync engine applying remote changes)
+
+    func upsertTimeBlock(_ block: TimeBlock) throws {
+        try dbPool.write { db in
+            try block.save(db)
+        }
+        // Only update in-memory if this block is for the currently loaded date
+        if let index = timeBlocks.firstIndex(where: { $0.id == block.id }) {
+            timeBlocks[index] = block
+        } else if block.date == currentDateString {
+            timeBlocks.append(block)
+            timeBlocks.sort { $0.startTime < $1.startTime }
+        }
+    }
+
+    func upsertStandaloneBlock(_ block: StandaloneBlock) throws {
+        try dbPool.write { db in
+            try block.save(db)
+        }
+        if let index = standaloneBlocks.firstIndex(where: { $0.id == block.id }) {
+            standaloneBlocks[index] = block
+        } else if block.date == currentDateString {
+            standaloneBlocks.append(block)
+            standaloneBlocks.sort { $0.startTime < $1.startTime }
+        }
+    }
+
+    /// The currently loaded date string, used to filter upserts.
+    private(set) var currentDateString: String = ""
+
+    /// Fetch all records across all dates (for initial sync push).
+    func allTimeBlocks() throws -> [TimeBlock] {
+        try dbPool.read { db in
+            try TimeBlock.fetchAll(db)
+        }
+    }
+
+    func allStandaloneBlocks() throws -> [StandaloneBlock] {
+        try dbPool.read { db in
+            try StandaloneBlock.fetchAll(db)
+        }
+    }
+
+    // MARK: - Sync notifications
+
+    private func notifySaved(_ block: TimeBlock) {
+        onSyncChange?(.saved(CloudKitBridge.recordID(for: block), "TimeBlock"))
+    }
+
+    private func notifySaved(_ block: StandaloneBlock) {
+        onSyncChange?(.saved(CloudKitBridge.recordID(for: block), "StandaloneBlock"))
+    }
+
+    private func notifyDeleted(_ id: String, _ type: String) {
+        let recordID = CKRecord.ID(recordName: id, zoneID: CloudKitBridge.zoneID)
+        onSyncChange?(.deleted(recordID, type))
     }
 
     // MARK: - Helpers
