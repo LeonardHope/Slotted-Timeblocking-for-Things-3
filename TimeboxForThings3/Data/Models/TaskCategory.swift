@@ -62,6 +62,34 @@ enum TaskCategorizer {
         return .anytime
     }
 
+    /// Sort tasks: start date first, then deadline, then tasks without dates last (alphabetically).
+    static func sortTasks(_ tasks: [TaskItem]) -> [TaskItem] {
+        tasks.sorted { a, b in
+            let aHasDate = a.startDate != nil || a.deadline != nil
+            let bHasDate = b.startDate != nil || b.deadline != nil
+
+            // Tasks with dates come before tasks without
+            if aHasDate != bHasDate { return aHasDate }
+
+            // Both have no dates — alphabetical
+            if !aHasDate && !bHasDate {
+                return a.title.localizedCaseInsensitiveCompare(b.title) == .orderedAscending
+            }
+
+            // Both have dates — sort by start date first, then deadline
+            let aDate = a.startDate ?? a.deadline ?? .distantFuture
+            let bDate = b.startDate ?? b.deadline ?? .distantFuture
+            if aDate != bDate { return aDate < bDate }
+
+            // Same start date — sort by deadline
+            let aDeadline = a.deadline ?? .distantFuture
+            let bDeadline = b.deadline ?? .distantFuture
+            if aDeadline != bDeadline { return aDeadline < bDeadline }
+
+            return a.title.localizedCaseInsensitiveCompare(b.title) == .orderedAscending
+        }
+    }
+
     static func groupByCategory(_ tasks: [TaskItem], referenceDate: Date = .now) -> [(category: TaskCategory, tasks: [TaskItem])] {
         var groups: [TaskCategory: [TaskItem]] = [:]
         for task in tasks {
@@ -73,7 +101,8 @@ enum TaskCategorizer {
             groups[.anytime, default: []].insert(contentsOf: todayTasks, at: 0)
         }
         return TaskCategory.allCases.compactMap { category in
-            guard let tasks = groups[category], !tasks.isEmpty else { return nil }
+            guard var tasks = groups[category], !tasks.isEmpty else { return nil }
+            tasks = sortTasks(tasks)
             return (category: category, tasks: tasks)
         }
     }
