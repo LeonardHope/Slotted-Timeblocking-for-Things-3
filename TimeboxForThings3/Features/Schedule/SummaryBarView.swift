@@ -9,9 +9,9 @@ struct SummaryBarView: View {
         HStack(spacing: 16) {
             // Date
             HStack(spacing: 8) {
-                Image(systemName: "calendar")
+                Image(systemName: "star.fill")
                     .font(.system(size: 18))
-                    .foregroundStyle(Theme.upcomingRed)
+                    .foregroundStyle(Theme.todayGold)
                 Text(dateString)
                     .font(Theme.pageTitle)
             }
