@@ -19,6 +19,11 @@
 - Add `colorIndex` field to `TimeBlock` model (needs DB migration)
 - Default to current project-based color, override when user picks custom
 
+## Show Area with Project Names
+- LHS project group headers currently only show the project name
+- Should also show the area (e.g., "Work > Hope IP - Firm Stuff" or "Personal > Financial")
+- Things 3 organizes projects under areas — our UI should reflect that hierarchy
+
 ## iCloud Sync Polish
 - Persist server record cache to disk to avoid "record already exists" errors on app restart
 - Currently self-healing (retry succeeds) but logs noisy errors in console
