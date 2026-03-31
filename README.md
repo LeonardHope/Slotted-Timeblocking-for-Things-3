@@ -53,6 +53,15 @@ Things 3 is great for managing tasks but lacks a way to plan your day on a timel
 - **Schedule data**: separate SQLite database at `~/Library/Application Support/TimeboxForThings3/schedule.sqlite`
 - **Task source abstraction**: designed to be extensible to other task managers (Todoist, etc.)
 
+## Your Things 3 Data is Safe
+
+Timebox for Things 3 uses **read-only access** to your Things 3 database. It cannot modify, delete, or corrupt your data.
+
+- The database connection is opened with SQLite's `SQLITE_OPEN_READONLY` flag — write attempts are rejected at the database engine level
+- There are no write statements (INSERT, UPDATE, DELETE) against the Things 3 database anywhere in the codebase
+- Your schedule is stored in a completely separate database
+- File monitoring uses macOS kernel events to detect changes — it does not open or modify any Things 3 files
+
 ## Building
 
 ```bash
