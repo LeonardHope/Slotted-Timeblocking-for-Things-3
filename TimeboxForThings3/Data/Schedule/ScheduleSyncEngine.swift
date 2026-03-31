@@ -31,6 +31,21 @@ final class ScheduleSyncEngine {
         }
     }
 
+    /// Create the custom record zone if it doesn't exist yet.
+    func ensureZoneExists() async {
+        let zone = CKRecordZone(zoneID: CloudKitBridge.zoneID)
+        let database = CloudKitBridge.container.privateCloudDatabase
+        do {
+            try await database.save(zone)
+            logger.info("Created zone: \(CloudKitBridge.zoneName)")
+        } catch let error as CKError where error.code == .serverRejectedRequest {
+            // Zone already exists — that's fine
+            logger.info("Zone already exists")
+        } catch {
+            logger.error("Failed to create zone: \(error)")
+        }
+    }
+
     func pushAllExistingRecords() {
         do {
             var pending: [CKSyncEngine.PendingRecordZoneChange] = []
@@ -75,6 +90,8 @@ private final class SyncDelegate: CKSyncEngineDelegate {
     let store: ScheduleStore
     weak var engine: CKSyncEngine?
     private let logger = Logger(subsystem: "com.timebox.TimeboxForThings3", category: "sync")
+    /// Server records to use for retries after conflicts (preserves etag).
+    private var serverRecordsForRetry: [CKRecord.ID: CKRecord] = [:]
 
     init(store: ScheduleStore) {
         self.store = store
@@ -107,9 +124,11 @@ private final class SyncDelegate: CKSyncEngineDelegate {
         case .sentRecordZoneChanges(let event):
             handleSentChanges(event)
 
-        case .accountChange, .fetchedDatabaseChanges,
+        case .accountChange(_), .fetchedDatabaseChanges(_),
              .willFetchChanges, .didFetchChanges,
-             .willSendChanges, .didSendChanges:
+             .willSendChanges, .didSendChanges,
+             .sentDatabaseChanges(_), .willFetchRecordZoneChanges,
+             .didFetchRecordZoneChanges:
             break
 
         @unknown default:
@@ -137,15 +156,20 @@ private final class SyncDelegate: CKSyncEngineDelegate {
         var recordsByID: [CKRecord.ID: CKRecord] = [:]
         for change in pending {
             if case .saveRecord(let recordID) = change {
-                let id = recordID.recordName
-                if let b = store.timeBlocks.first(where: { $0.id == id }) {
-                    recordsByID[recordID] = CloudKitBridge.toCKRecord(b)
-                } else if let b = store.standaloneBlocks.first(where: { $0.id == id }) {
-                    recordsByID[recordID] = CloudKitBridge.toCKRecord(b)
-                } else if let b = (try? store.allTimeBlocks())?.first(where: { $0.id == id }) {
-                    recordsByID[recordID] = CloudKitBridge.toCKRecord(b)
-                } else if let b = (try? store.allStandaloneBlocks())?.first(where: { $0.id == id }) {
-                    recordsByID[recordID] = CloudKitBridge.toCKRecord(b)
+                // Use server record if we have one (conflict retry with correct etag)
+                if let serverRecord = serverRecordsForRetry.removeValue(forKey: recordID) {
+                    recordsByID[recordID] = serverRecord
+                } else {
+                    let id = recordID.recordName
+                    if let b = store.timeBlocks.first(where: { $0.id == id }) {
+                        recordsByID[recordID] = CloudKitBridge.toCKRecord(b)
+                    } else if let b = store.standaloneBlocks.first(where: { $0.id == id }) {
+                        recordsByID[recordID] = CloudKitBridge.toCKRecord(b)
+                    } else if let b = (try? store.allTimeBlocks())?.first(where: { $0.id == id }) {
+                        recordsByID[recordID] = CloudKitBridge.toCKRecord(b)
+                    } else if let b = (try? store.allStandaloneBlocks())?.first(where: { $0.id == id }) {
+                        recordsByID[recordID] = CloudKitBridge.toCKRecord(b)
+                    }
                 }
             }
         }
@@ -208,19 +232,31 @@ private final class SyncDelegate: CKSyncEngineDelegate {
 
     private func handleSentChanges(_ event: CKSyncEngine.Event.SentRecordZoneChanges) {
         for failure in event.failedRecordSaves {
-            if failure.error.code == .serverRecordChanged,
-               let serverRecord = failure.error.serverRecord {
-                switch serverRecord.recordType {
-                case "TimeBlock":
-                    if let b = CloudKitBridge.timeBlock(from: serverRecord) {
-                        try? store.upsertTimeBlock(b)
+            if failure.error.code == .serverRecordChanged {
+                // Server has a newer/existing version — use it as the base for our update
+                if let serverRecord = failure.error.serverRecord {
+                    // Apply our local values onto the server record (preserves etag)
+                    let id = serverRecord.recordID.recordName
+                    switch serverRecord.recordType {
+                    case "TimeBlock":
+                        if let localBlock = store.timeBlocks.first(where: { $0.id == id }) {
+                            let merged = CloudKitBridge.applyToServerRecord(localBlock, serverRecord: serverRecord)
+                            serverRecordsForRetry[merged.recordID] = merged
+                            engine?.state.add(pendingRecordZoneChanges: [.saveRecord(merged.recordID)])
+                        } else if let b = CloudKitBridge.timeBlock(from: serverRecord) {
+                            try? store.upsertTimeBlock(b)
+                        }
+                    case "StandaloneBlock":
+                        if let localBlock = store.standaloneBlocks.first(where: { $0.id == id }) {
+                            let merged = CloudKitBridge.applyToServerRecord(localBlock, serverRecord: serverRecord)
+                            serverRecordsForRetry[merged.recordID] = merged
+                            engine?.state.add(pendingRecordZoneChanges: [.saveRecord(merged.recordID)])
+                        } else if let b = CloudKitBridge.standaloneBlock(from: serverRecord) {
+                            try? store.upsertStandaloneBlock(b)
+                        }
+                    default:
+                        break
                     }
-                case "StandaloneBlock":
-                    if let b = CloudKitBridge.standaloneBlock(from: serverRecord) {
-                        try? store.upsertStandaloneBlock(b)
-                    }
-                default:
-                    break
                 }
             } else {
                 logger.error("Sync save failed: \(failure.error)")
@@ -233,14 +269,14 @@ private final class SyncDelegate: CKSyncEngineDelegate {
 
 extension ScheduleStore {
     func deleteTimeBlockSilently(id: String) throws {
-        try dbPool.write { db in
+        _ = try dbPool.write { db in
             try TimeBlock.deleteOne(db, key: id)
         }
         timeBlocks.removeAll { $0.id == id }
     }
 
     func deleteStandaloneBlockSilently(id: String) throws {
-        try dbPool.write { db in
+        _ = try dbPool.write { db in
             try StandaloneBlock.deleteOne(db, key: id)
         }
         standaloneBlocks.removeAll { $0.id == id }

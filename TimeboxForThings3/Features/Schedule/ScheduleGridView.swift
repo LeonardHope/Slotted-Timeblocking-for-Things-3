@@ -79,7 +79,7 @@ struct ScheduleGridView: View {
             onDrop: { taskUUID, minutes in
                 guard let store = appState.scheduleStore else { return }
                 let snapped = snapToGrid(minutes)
-                try? store.addTimeBlock(
+                _ = try? store.addTimeBlock(
                     taskUUID: taskUUID,
                     date: appState.selectedDate,
                     startTime: snapped
@@ -88,7 +88,7 @@ struct ScheduleGridView: View {
             onDoubleClick: { minutes in
                 guard let store = appState.scheduleStore else { return }
                 let snapped = snapToGrid(minutes)
-                try? store.addStandaloneBlock(
+                _ = try? store.addStandaloneBlock(
                     date: appState.selectedDate,
                     startTime: snapped
                 )

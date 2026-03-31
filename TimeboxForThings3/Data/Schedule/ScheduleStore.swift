@@ -36,6 +36,7 @@ final class ScheduleStore {
 
     func loadBlocks(for date: Date) async throws {
         let dateString = Self.isoDateString(from: date)
+        currentDateString = dateString
         let (time, standalone) = try await dbPool.read { db in
             let timeBlocks = try TimeBlock
                 .filter(Column("date") == dateString)
@@ -56,7 +57,7 @@ final class ScheduleStore {
     @discardableResult
     func addTimeBlock(taskUUID: String, date: Date, startTime: Int, duration: Int = 30) throws -> TimeBlock {
         let now = Date().timeIntervalSince1970
-        var block = TimeBlock(
+        let block = TimeBlock(
             id: UUID().uuidString,
             taskUUID: taskUUID,
             date: Self.isoDateString(from: date),
@@ -87,7 +88,7 @@ final class ScheduleStore {
     }
 
     func deleteTimeBlock(id: String) throws {
-        try dbPool.write { db in
+        _ = try dbPool.write { db in
             try TimeBlock.deleteOne(db, key: id)
         }
         timeBlocks.removeAll { $0.id == id }
@@ -96,7 +97,7 @@ final class ScheduleStore {
 
     func deleteTimeBlocks(forTaskUUID uuid: String) throws {
         let ids = timeBlocks.filter { $0.taskUUID == uuid }.map(\.id)
-        try dbPool.write { db in
+        _ = try dbPool.write { db in
             try TimeBlock.filter(Column("taskUUID") == uuid).deleteAll(db)
         }
         timeBlocks.removeAll { $0.taskUUID == uuid }
@@ -108,7 +109,7 @@ final class ScheduleStore {
     @discardableResult
     func addStandaloneBlock(title: String = "Untitled", date: Date, startTime: Int, duration: Int = 30, colorIndex: Int = 0) throws -> StandaloneBlock {
         let now = Date().timeIntervalSince1970
-        var block = StandaloneBlock(
+        let block = StandaloneBlock(
             id: UUID().uuidString,
             title: title,
             date: Self.isoDateString(from: date),
@@ -140,7 +141,7 @@ final class ScheduleStore {
     }
 
     func deleteStandaloneBlock(id: String) throws {
-        try dbPool.write { db in
+        _ = try dbPool.write { db in
             try StandaloneBlock.deleteOne(db, key: id)
         }
         standaloneBlocks.removeAll { $0.id == id }
@@ -170,9 +171,10 @@ final class ScheduleStore {
         try dbPool.write { db in
             try block.save(db)
         }
+        // Only update in-memory if this block is for the currently loaded date
         if let index = timeBlocks.firstIndex(where: { $0.id == block.id }) {
             timeBlocks[index] = block
-        } else {
+        } else if block.date == currentDateString {
             timeBlocks.append(block)
             timeBlocks.sort { $0.startTime < $1.startTime }
         }
@@ -184,11 +186,14 @@ final class ScheduleStore {
         }
         if let index = standaloneBlocks.firstIndex(where: { $0.id == block.id }) {
             standaloneBlocks[index] = block
-        } else {
+        } else if block.date == currentDateString {
             standaloneBlocks.append(block)
             standaloneBlocks.sort { $0.startTime < $1.startTime }
         }
     }
+
+    /// The currently loaded date string, used to filter upserts.
+    private(set) var currentDateString: String = ""
 
     /// Fetch all records across all dates (for initial sync push).
     func allTimeBlocks() throws -> [TimeBlock] {

@@ -51,7 +51,7 @@ final class AppState {
         didSet {
             UserDefaults.standard.set(iCloudSyncEnabled, forKey: "iCloudSyncEnabled")
             if iCloudSyncEnabled {
-                startSyncEngine()
+                Task { await startSyncEngine() }
             } else {
                 syncEngine = nil
             }
@@ -88,7 +88,7 @@ final class AppState {
         }
 
         if iCloudSyncEnabled {
-            startSyncEngine()
+            await startSyncEngine()
         }
 
         observeDayChange()
@@ -116,10 +116,11 @@ final class AppState {
         try? await scheduleStore?.loadBlocks(for: date)
     }
 
-    private func startSyncEngine() {
+    private func startSyncEngine() async {
         guard let store = scheduleStore else { return }
         do {
             let engine = try ScheduleSyncEngine(store: store)
+            await engine.ensureZoneExists()
             // On first launch with sync, push all existing records
             if !UserDefaults.standard.bool(forKey: "hasPerformedInitialSync") {
                 engine.pushAllExistingRecords()

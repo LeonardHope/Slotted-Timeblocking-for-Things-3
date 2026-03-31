@@ -51,6 +51,17 @@ enum CloudKitBridge {
         )
     }
 
+    /// Apply local TimeBlock values onto a server record (preserves etag for conflict resolution).
+    static func applyToServerRecord(_ block: TimeBlock, serverRecord: CKRecord) -> CKRecord {
+        serverRecord["taskUUID"] = block.taskUUID
+        serverRecord["date"] = block.date
+        serverRecord["startTime"] = block.startTime as NSNumber
+        serverRecord["duration"] = block.duration as NSNumber
+        serverRecord["createdAt"] = block.createdAt as NSNumber
+        serverRecord["updatedAt"] = block.updatedAt as NSNumber
+        return serverRecord
+    }
+
     // MARK: - StandaloneBlock
 
     static func recordID(for block: StandaloneBlock) -> CKRecord.ID {
@@ -90,5 +101,16 @@ enum CloudKitBridge {
             createdAt: createdAt,
             updatedAt: updatedAt
         )
+    }
+
+    static func applyToServerRecord(_ block: StandaloneBlock, serverRecord: CKRecord) -> CKRecord {
+        serverRecord["title"] = block.title
+        serverRecord["date"] = block.date
+        serverRecord["startTime"] = block.startTime as NSNumber
+        serverRecord["duration"] = block.duration as NSNumber
+        serverRecord["colorIndex"] = block.colorIndex as NSNumber
+        serverRecord["createdAt"] = block.createdAt as NSNumber
+        serverRecord["updatedAt"] = block.updatedAt as NSNumber
+        return serverRecord
     }
 }
