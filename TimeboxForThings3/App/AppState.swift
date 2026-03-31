@@ -92,6 +92,7 @@ final class AppState {
         }
 
         observeDayChange()
+        observeTaskCompletions()
     }
 
     /// Listens for NSCalendarDayChanged notification from the system.
@@ -132,6 +133,27 @@ final class AppState {
             }
         } catch {
             self.error = error
+        }
+    }
+
+    /// Remove scheduled blocks whose tasks are no longer active in Things 3.
+    private func observeTaskCompletions() {
+        withObservationTracking {
+            _ = taskProvider.tasks
+        } onChange: { [weak self] in
+            Task { @MainActor [weak self] in
+                self?.removeCompletedBlocks()
+                self?.observeTaskCompletions()
+            }
+        }
+    }
+
+    private func removeCompletedBlocks() {
+        guard let store = scheduleStore else { return }
+        let activeTaskIDs = Set(taskProvider.tasks.map(\.id))
+        let orphanedBlocks = store.timeBlocks.filter { !activeTaskIDs.contains($0.taskUUID) }
+        for block in orphanedBlocks {
+            try? store.deleteTimeBlock(id: block.id)
         }
     }
 
