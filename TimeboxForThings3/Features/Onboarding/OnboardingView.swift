@@ -31,7 +31,7 @@ struct OnboardingView: View {
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
 
-                Button("Things 3 is not installed", action: onSkip)
+                Button("Skip for now", action: onSkip)
                     .buttonStyle(.plain)
                     .foregroundStyle(.secondary)
                     .font(.callout)
