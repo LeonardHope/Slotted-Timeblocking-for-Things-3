@@ -12,6 +12,7 @@ struct TimeboxApp: App {
                 .preferredColorScheme(appState.preferredColorScheme)
                 .frame(minWidth: 800, minHeight: 600)
         }
+        .windowStyle(.hiddenTitleBar)
         .defaultSize(width: 1100, height: 750)
     }
 }
