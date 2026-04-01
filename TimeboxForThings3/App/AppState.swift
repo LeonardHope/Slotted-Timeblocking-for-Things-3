@@ -48,6 +48,9 @@ final class AppState {
     var hideEmptyCategories: Bool {
         didSet { UserDefaults.standard.set(hideEmptyCategories, forKey: "hideEmptyCategories") }
     }
+    var hideEmptyProjects: Bool {
+        didSet { UserDefaults.standard.set(hideEmptyProjects, forKey: "hideEmptyProjects") }
+    }
     var showDates: Bool {
         didSet { UserDefaults.standard.set(showDates, forKey: "showDates") }
     }
@@ -84,13 +87,14 @@ final class AppState {
         self.taskProvider = Things3Provider()
 
         let defaults = UserDefaults.standard
-        defaults.register(defaults: ["startHour": 9, "endHour": 17, "appearanceMode": 0, "textScale": 1.0, "hideEmptyCategories": true, "showDates": true, "clearAtMidnight": true, "hideScheduledTasks": true, "iCloudSyncEnabled": false, "showCalendarEvents": false])
+        defaults.register(defaults: ["startHour": 9, "endHour": 17, "appearanceMode": 0, "textScale": 1.0, "hideEmptyCategories": true, "hideEmptyProjects": true, "showDates": true, "clearAtMidnight": true, "hideScheduledTasks": true, "iCloudSyncEnabled": false, "showCalendarEvents": false])
 
         self.startHour = defaults.integer(forKey: "startHour")
         self.endHour = defaults.integer(forKey: "endHour")
         self.appearanceMode = AppearanceMode(rawValue: defaults.integer(forKey: "appearanceMode")) ?? .auto
         self.textScale = defaults.double(forKey: "textScale")
         self.hideEmptyCategories = defaults.bool(forKey: "hideEmptyCategories")
+        self.hideEmptyProjects = defaults.bool(forKey: "hideEmptyProjects")
         self.showDates = defaults.bool(forKey: "showDates")
         self.clearAtMidnight = defaults.bool(forKey: "clearAtMidnight")
         self.hideScheduledTasks = defaults.bool(forKey: "hideScheduledTasks")
