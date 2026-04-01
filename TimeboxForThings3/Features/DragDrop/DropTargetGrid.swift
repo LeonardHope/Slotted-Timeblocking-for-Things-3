@@ -78,7 +78,7 @@ class DropTargetNSView: NSView {
 
     private func snappedY(for point: NSPoint) -> CGFloat {
         let minutes = minutesFromY(point.y)
-        let snapped = (minutes / 30) * 30
+        let snapped = (minutes / 15) * 15
         return CGFloat(snapped - startMinutes) * pointsPerMinute
     }
 
