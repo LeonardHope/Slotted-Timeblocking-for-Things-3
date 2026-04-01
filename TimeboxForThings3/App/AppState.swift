@@ -15,9 +15,11 @@ final class AppState {
     var taskProvider: Things3Provider
     var scheduleStore: ScheduleStore?
     var calendarProvider = CalendarProvider()
+    var databaseAccessManager = DatabaseAccessManager()
     var selectedDate: Date = .now
     var dragDropCoordinator = DragDropCoordinator()
     var selectedBlockID: String?
+    var needsOnboarding = false
     var error: Error?
 
     /// Task UUIDs that are currently scheduled on the RHS
@@ -94,7 +96,14 @@ final class AppState {
     }
 
     func initialize() async {
-        await taskProvider.startObserving()
+        // Try to find the Things 3 database
+        if let path = databaseAccessManager.resolveAccess() {
+            taskProvider.setDatabasePath(path)
+            await taskProvider.startObserving()
+        } else {
+            needsOnboarding = true
+            return
+        }
 
         do {
             scheduleStore = try ScheduleStore()
@@ -134,6 +143,27 @@ final class AppState {
                 }
                 await self.changeDate(to: today)
             }
+        }
+    }
+
+    /// Called from the onboarding view when the user grants file access.
+    func grantDatabaseAccess() async {
+        if let path = databaseAccessManager.requestUserAccess() {
+            taskProvider.setDatabasePath(path)
+            await taskProvider.startObserving()
+            needsOnboarding = false
+
+            do {
+                scheduleStore = try ScheduleStore()
+                try await scheduleStore?.loadBlocks(for: selectedDate)
+            } catch {
+                self.error = error
+            }
+
+            if showCalendarEvents { await enableCalendar() }
+            if iCloudSyncEnabled { await startSyncEngine() }
+            observeDayChange()
+            observeTaskCompletions()
         }
     }
 

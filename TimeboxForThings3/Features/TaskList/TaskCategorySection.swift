@@ -4,9 +4,10 @@ import SwiftUI
 struct TaskCategorySection: View {
     let category: TaskCategory
     let tasks: [TaskItem]
-    @State private var isExpanded = true
-    @State private var collapsedAreas: Set<String> = []
-    @State private var collapsedProjects: Set<String> = []
+    @State private var isExpanded: Bool = false
+    @State private var expandedAreas: Set<String> = []
+    @State private var expandedProjects: Set<String> = []
+    @State private var didSetDefaults = false
     @Environment(\.textScale) private var textScale
 
     var body: some View {
@@ -47,14 +48,14 @@ struct TaskCategorySection: View {
                         areaHeader(areaName, key: areaGroup.id)
                     }
 
-                    if !collapsedAreas.contains(areaGroup.id) {
+                    if expandedAreas.contains(areaGroup.id) {
                         ForEach(areaGroup.projects) { projectGroup in
                             // Project header (if named)
                             if let projectName = projectGroup.projectName {
                                 projectHeader(projectName, key: projectGroup.id, indented: areaGroup.areaName != nil)
                             }
 
-                            if !collapsedProjects.contains(projectGroup.id) {
+                            if expandedProjects.contains(projectGroup.id) {
                                 ForEach(projectGroup.tasks) { task in
                                     TaskRowView(task: task)
                                 }
@@ -65,14 +66,26 @@ struct TaskCategorySection: View {
             }
         }
         .padding(.bottom, 8)
+        .onAppear {
+            guard !didSetDefaults else { return }
+            didSetDefaults = true
+            if category == .today || category == .inbox {
+                isExpanded = true
+                let hierarchy = buildHierarchy(tasks)
+                for area in hierarchy { expandedAreas.insert(area.id) }
+                for area in hierarchy {
+                    for project in area.projects { expandedProjects.insert(project.id) }
+                }
+            }
+        }
     }
 
     // MARK: - Headers
 
     private func areaHeader(_ name: String, key: String) -> some View {
-        let collapsed = collapsedAreas.contains(key)
+        let expanded = expandedAreas.contains(key)
         return HStack(spacing: 6) {
-            Image(systemName: collapsed ? "chevron.right" : "chevron.down")
+            Image(systemName: expanded ? "chevron.down" : "chevron.right")
                 .font(.system(size: 9, weight: .semibold))
                 .foregroundStyle(Theme.textTertiary)
             Text(name)
@@ -87,13 +100,13 @@ struct TaskCategorySection: View {
         .contentShape(Rectangle())
         .onTapGesture {
             withAnimation(.easeInOut(duration: 0.15)) {
-                if collapsed { collapsedAreas.remove(key) } else { collapsedAreas.insert(key) }
+                if expanded { expandedAreas.remove(key) } else { expandedAreas.insert(key) }
             }
         }
     }
 
     private func projectHeader(_ name: String, key: String, indented: Bool) -> some View {
-        let collapsed = collapsedProjects.contains(key)
+        let expanded = expandedProjects.contains(key)
         return HStack(spacing: 6) {
             Circle()
                 .fill(ProjectColorGenerator.listDotColor)
@@ -103,7 +116,7 @@ struct TaskCategorySection: View {
                 .foregroundStyle(Theme.textSecondary)
                 .fontWeight(.medium)
             Spacer()
-            Image(systemName: collapsed ? "chevron.right" : "chevron.down")
+            Image(systemName: expanded ? "chevron.down" : "chevron.right")
                 .font(.system(size: 9, weight: .semibold))
                 .foregroundStyle(Theme.textTertiary)
         }
@@ -113,7 +126,7 @@ struct TaskCategorySection: View {
         .contentShape(Rectangle())
         .onTapGesture {
             withAnimation(.easeInOut(duration: 0.15)) {
-                if collapsed { collapsedProjects.remove(key) } else { collapsedProjects.insert(key) }
+                if expanded { expandedProjects.remove(key) } else { expandedProjects.insert(key) }
             }
         }
     }

@@ -16,13 +16,24 @@ final class Things3Provider: TaskProvider {
     private var database: Things3Database?
     private var fileMonitor: Things3FileMonitor?
     private var fallbackTimer: Timer?
+    private var customDatabasePath: String?
+
+    /// Set a custom database path (e.g., from user-granted file access).
+    func setDatabasePath(_ path: String) {
+        customDatabasePath = path
+    }
 
     func startObserving() async {
         isLoading = true
         defer { isLoading = false }
 
         do {
-            let db = try Things3Database()
+            let db: Things3Database
+            if let path = customDatabasePath {
+                db = try Things3Database(path: path)
+            } else {
+                db = try Things3Database()
+            }
             self.database = db
             await refresh()
             startFileMonitor(dbPath: db.dbPool.path)

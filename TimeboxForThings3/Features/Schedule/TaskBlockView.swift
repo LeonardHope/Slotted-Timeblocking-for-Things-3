@@ -123,8 +123,7 @@ struct TaskBlockView: View {
                 case .active(let loc):
                     let inTopEdge = loc.y < edgeZone
                     let inBottomEdge = loc.y > blockHeight - edgeZone
-                    let inXButton = loc.x > blockHeight - 24 && loc.y < 20 // approx X area
-                    if (inTopEdge || inBottomEdge) && !inXButton {
+                    if inTopEdge || inBottomEdge {
                         NSCursor.resizeUpDown.set()
                     } else {
                         NSCursor.arrow.set()
