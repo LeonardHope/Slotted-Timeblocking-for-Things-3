@@ -27,33 +27,28 @@ final class DatabaseAccessManager {
     /// Present an open panel for the user to grant access to the Things 3 database directory.
     func requestUserAccess() -> String? {
         let panel = NSOpenPanel()
-        panel.title = "Select Your Things 3 Database"
-        panel.message = "Navigate to the Things 3 database and select the \"main.sqlite\" file."
+        panel.title = "Select Things 3 Database Folder"
+        panel.message = "Select the \"Things Database.thingsdatabase\" folder."
         panel.prompt = "Grant Access"
-        panel.allowedContentTypes = [.data]
         panel.allowsMultipleSelection = false
-        panel.canChooseDirectories = false
-        panel.canChooseFiles = true
+        panel.canChooseDirectories = true
+        panel.canChooseFiles = false
         panel.showsHiddenFiles = true
         panel.treatsFilePackagesAsDirectories = true
         panel.directoryURL = suggestedDirectory()
 
-        let validator = OpenPanelValidator()
-        panel.delegate = validator
-
-        guard panel.runModal() == .OK, let fileURL = panel.url else {
+        guard panel.runModal() == .OK, let dirURL = panel.url else {
             return nil
         }
 
-        guard fileURL.lastPathComponent == "main.sqlite" else {
+        // Verify main.sqlite exists in the selected directory
+        let dbPath = dirURL.appendingPathComponent("main.sqlite").path
+        guard FileManager.default.fileExists(atPath: dbPath) else {
             return nil
         }
 
-        // Bookmark the parent directory (grants access to WAL/SHM files too)
-        let dirURL = fileURL.deletingLastPathComponent()
         saveBookmark(for: dirURL)
-
-        return fileURL.path
+        return dbPath
     }
 
     // MARK: - Bookmark persistence
@@ -138,13 +133,3 @@ final class DatabaseAccessManager {
     }
 }
 
-/// Only enable Grant Access for main.sqlite files.
-private class OpenPanelValidator: NSObject, NSOpenSavePanelDelegate {
-    func panel(_ sender: Any, shouldEnable url: URL) -> Bool {
-        var isDir: ObjCBool = false
-        if FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir), isDir.boolValue {
-            return true
-        }
-        return url.lastPathComponent == "main.sqlite"
-    }
-}
