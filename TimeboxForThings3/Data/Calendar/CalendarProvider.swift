@@ -19,7 +19,6 @@ final class CalendarProvider {
     private let store = EKEventStore()
     var events: [CalendarEvent] = []
     private(set) var accessGranted = false
-    private var notificationObserver: Any?
 
     func requestAccess() async {
         do {
@@ -73,17 +72,7 @@ final class CalendarProvider {
     }
 
     private func observeChanges() {
-        notificationObserver = NotificationCenter.default.addObserver(
-            forName: .EKEventStoreChanged,
-            object: store,
-            queue: .main
-        ) { [weak self] _ in
-            Task { @MainActor [weak self] in
-                guard let self else { return }
-                // Re-fetch for whatever date is currently loaded
-                // The caller should trigger this via onChange
-            }
-        }
+        // EKEventStoreChanged is observed by AppState to trigger re-fetch
     }
 
     /// Whether the user has calendar events enabled and access granted.
