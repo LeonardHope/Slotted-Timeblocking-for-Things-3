@@ -4,9 +4,10 @@ import SwiftUI
 struct TaskCategorySection: View {
     let category: TaskCategory
     let tasks: [TaskItem]
-    @State private var isExpanded = false
+    @State private var isExpanded: Bool = false
     @State private var expandedAreas: Set<String> = []
     @State private var expandedProjects: Set<String> = []
+    @State private var didSetDefaults = false
     @Environment(\.textScale) private var textScale
 
     var body: some View {
@@ -65,6 +66,18 @@ struct TaskCategorySection: View {
             }
         }
         .padding(.bottom, 8)
+        .onAppear {
+            guard !didSetDefaults else { return }
+            didSetDefaults = true
+            if category == .today {
+                isExpanded = true
+                let hierarchy = buildHierarchy(tasks)
+                for area in hierarchy { expandedAreas.insert(area.id) }
+                for area in hierarchy {
+                    for project in area.projects { expandedProjects.insert(project.id) }
+                }
+            }
+        }
     }
 
     // MARK: - Headers
