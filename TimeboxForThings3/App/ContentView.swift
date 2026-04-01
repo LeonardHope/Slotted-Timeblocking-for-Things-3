@@ -12,14 +12,10 @@ struct ContentView: View {
                     }
                 )
             } else {
-                HStack(spacing: 0) {
+                NavigationSplitView {
                     TaskListView()
-                        .frame(width: 320)
-
-                    Divider()
-
+                } detail: {
                     ScheduleGridView()
-                        .frame(maxWidth: .infinity)
                 }
                 .focusable()
                 .focusEffectDisabled()
