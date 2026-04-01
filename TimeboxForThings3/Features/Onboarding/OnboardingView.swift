@@ -39,12 +39,12 @@ struct OnboardingView: View {
 
             VStack(alignment: .leading, spacing: 8) {
                 Label("How to find the database:", systemImage: "questionmark.circle")
-                    .font(.callout.weight(.medium))
-                    .foregroundStyle(.secondary)
+                    .font(.body.weight(.medium))
+                    .foregroundStyle(.primary)
 
                 Text("1. Click \"Select Things 3 Database\" above\n2. Navigate to: ~/Library/Group Containers/\n3. Open the folder starting with \"JLMPQHK86H\"\n4. Open \"ThingsData-...\", then \"Things Database.thingsdatabase\"\n5. Select \"main.sqlite\"")
-                    .font(.caption)
-                    .foregroundStyle(.tertiary)
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
                     .padding(.leading, 28)
             }
             .frame(maxWidth: 400, alignment: .leading)
