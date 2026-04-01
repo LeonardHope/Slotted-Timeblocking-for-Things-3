@@ -16,8 +16,8 @@ struct CalendarEventView: View {
             RoundedRectangle(cornerRadius: radius)
                 .fill(color.opacity(0.08))
                 .overlay(
-                    DiagonalStripes(spacing: 8, lineWidth: 0.5)
-                        .foregroundStyle(color.opacity(0.12))
+                    DiagonalStripes(spacing: 6, lineWidth: 1.5)
+                        .foregroundStyle(color.opacity(0.4))
                         .clipShape(RoundedRectangle(cornerRadius: radius))
                 )
                 .overlay(
