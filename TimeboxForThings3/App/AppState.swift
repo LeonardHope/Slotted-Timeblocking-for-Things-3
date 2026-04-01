@@ -1,5 +1,6 @@
 import Foundation
 import Observation
+import os
 import SwiftUI
 
 enum AppearanceMode: Int, CaseIterable, Hashable {
@@ -234,6 +235,17 @@ final class AppState {
         let orphanedBlocks = store.timeBlocks.filter { !activeTaskIDs.contains($0.taskUUID) }
         for block in orphanedBlocks {
             try? store.deleteTimeBlock(id: block.id)
+        }
+    }
+
+    /// Log and surface errors from store operations.
+    func perform(_ operation: () throws -> Void) {
+        do {
+            try operation()
+        } catch {
+            self.error = error
+            Logger(subsystem: "com.timebox.TimeboxForThings3", category: "store")
+                .error("Store operation failed: \(error)")
         }
     }
 

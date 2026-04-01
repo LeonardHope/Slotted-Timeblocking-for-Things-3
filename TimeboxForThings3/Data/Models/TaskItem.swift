@@ -25,24 +25,31 @@ struct TaskItem: Identifiable, Hashable {
         return deadline < Calendar.current.startOfDay(for: .now)
     }
 
+    private static nonisolated(unsafe) let relativeDateFormatter: RelativeDateTimeFormatter = {
+        let f = RelativeDateTimeFormatter()
+        f.unitsStyle = .short
+        return f
+    }()
+
+    private static let dateFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "MMM d"
+        return f
+    }()
+
     var deadlineDisplayText: String? {
         guard let deadline else { return nil }
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: .now)
-        let days = calendar.dateComponents([.day], from: today, to: calendar.startOfDay(for: deadline)).day ?? 0
+        let deadlineDay = calendar.startOfDay(for: deadline)
+        let days = calendar.dateComponents([.day], from: today, to: deadlineDay).day ?? 0
 
         if days < 0 {
-            return "\(abs(days))d overdue"
-        } else if days == 0 {
-            return "Today"
-        } else if days == 1 {
-            return "Tomorrow"
+            return Self.relativeDateFormatter.localizedString(for: deadlineDay, relativeTo: today)
         } else if days <= 7 {
-            return "\(days) days left"
+            return Self.relativeDateFormatter.localizedString(for: deadlineDay, relativeTo: today)
         } else {
-            let formatter = DateFormatter()
-            formatter.dateFormat = "MMM d"
-            return formatter.string(from: deadline)
+            return Self.dateFormatter.string(from: deadline)
         }
     }
 
