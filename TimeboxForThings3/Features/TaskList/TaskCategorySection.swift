@@ -69,7 +69,7 @@ struct TaskCategorySection: View {
         .onAppear {
             guard !didSetDefaults else { return }
             didSetDefaults = true
-            if category == .today {
+            if category == .today || category == .inbox {
                 isExpanded = true
                 let hierarchy = buildHierarchy(tasks)
                 for area in hierarchy { expandedAreas.insert(area.id) }
