@@ -10,16 +10,20 @@ struct NowLineView: View {
     var body: some View {
         let position = yPositionForNow
         if let position {
-            HStack(spacing: 4) {
+            ZStack(alignment: .leading) {
+                // The line — positioned exactly at the computed y
+                Rectangle()
+                    .fill(Theme.nowLineRed)
+                    .frame(height: 1.5)
+                    .padding(.leading, Theme.timeLabelWidth)
+
+                // Time label — centered vertically on the line
                 Text(timeString)
                     .font(.system(size: 10, weight: .semibold))
                     .foregroundStyle(Theme.nowLineRed)
                     .frame(width: Theme.timeLabelWidth - 8, alignment: .trailing)
-
-                Rectangle()
-                    .fill(Theme.nowLineRed)
-                    .frame(height: 1.5)
             }
+            .frame(height: 0) // zero height so offset is exact
             .offset(y: position)
             .onReceive(timer) { _ in
                 now = Date()
