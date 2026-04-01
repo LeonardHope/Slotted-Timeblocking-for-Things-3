@@ -114,7 +114,7 @@ final class DatabaseAccessManager {
         let groupContainer = home.appendingPathComponent(
             "Library/Group Containers/JLMPQHK86H.com.culturedcode.ThingsMac"
         )
-        // Try to find the ThingsData directory
+        // Try to open directly at the database folder
         if let contents = try? FileManager.default.contentsOfDirectory(at: groupContainer, includingPropertiesForKeys: nil),
            let thingsDataDir = contents.first(where: { $0.lastPathComponent.hasPrefix("ThingsData-") }) {
             return thingsDataDir
@@ -124,6 +124,11 @@ final class DatabaseAccessManager {
         if FileManager.default.fileExists(atPath: groupContainer.path) {
             return groupContainer
         }
-        return nil
+        // Fall back to Group Containers (sandbox may block above)
+        let groupContainers = home.appendingPathComponent("Library/Group Containers")
+        if FileManager.default.fileExists(atPath: groupContainers.path) {
+            return groupContainers
+        }
+        return home.appendingPathComponent("Library")
     }
 }
