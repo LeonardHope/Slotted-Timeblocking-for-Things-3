@@ -25,6 +25,7 @@ enum CloudKitBridge {
         record["date"] = block.date
         record["startTime"] = block.startTime as NSNumber
         record["duration"] = block.duration as NSNumber
+        record["colorIndex"] = block.colorIndex.map { $0 as NSNumber }
         record["createdAt"] = block.createdAt as NSNumber
         record["updatedAt"] = block.updatedAt as NSNumber
         return record
@@ -46,17 +47,18 @@ enum CloudKitBridge {
             date: date,
             startTime: startTime,
             duration: duration,
+            colorIndex: record["colorIndex"] as? Int,
             createdAt: createdAt,
             updatedAt: updatedAt
         )
     }
 
-    /// Apply local TimeBlock values onto a server record (preserves etag for conflict resolution).
     static func applyToServerRecord(_ block: TimeBlock, serverRecord: CKRecord) -> CKRecord {
         serverRecord["taskUUID"] = block.taskUUID
         serverRecord["date"] = block.date
         serverRecord["startTime"] = block.startTime as NSNumber
         serverRecord["duration"] = block.duration as NSNumber
+        serverRecord["colorIndex"] = block.colorIndex.map { $0 as NSNumber }
         serverRecord["createdAt"] = block.createdAt as NSNumber
         serverRecord["updatedAt"] = block.updatedAt as NSNumber
         return serverRecord

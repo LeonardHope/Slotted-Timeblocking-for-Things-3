@@ -16,6 +16,7 @@ struct TimeBlock: Identifiable, Hashable, Codable, FetchableRecord, PersistableR
     var date: String
     var startTime: Int
     var duration: Int
+    var colorIndex: Int?   // nil = use project color
     var createdAt: Double
     var updatedAt: Double
 
