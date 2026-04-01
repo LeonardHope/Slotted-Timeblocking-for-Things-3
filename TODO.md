@@ -13,19 +13,6 @@
 - Use case: working on the same task before and after lunch
 - Currently tasks hide from LHS after first drag, preventing this
 
-## Custom Block Colors
-- Let users change the color of individual task time blocks
-- Add a simple control (click-to-cycle dot, like standalone blocks already have)
-- Add `colorIndex` field to `TimeBlock` model (needs DB migration)
-- Default to current project-based color, override when user picks custom
-
-## Area / Project Hierarchy on LHS
-- Within each category, group tasks into areas, then projects under each area
-- Add expand/collapse controls for areas and projects
-- Hierarchy: Category > Area > Project > Tasks
-- Tasks without an area/project go under a default "No Area" group
-- Matches how Things 3 organizes its sidebar
-
 ## Calendar Integration
 - Import events from the user's macOS calendar and show as blocks on the RHS
 - Calendar events block out time, preventing task scheduling over meetings
