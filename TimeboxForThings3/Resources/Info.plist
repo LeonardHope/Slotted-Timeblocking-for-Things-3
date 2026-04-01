@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>NSCalendarsUsageDescription</key>
-    <string>Timebox for Things 3 displays your calendar events on the schedule to help you plan around meetings and appointments.</string>
+    <string>Slotted displays your calendar events on the schedule to help you plan around meetings and appointments.</string>
     <key>UTExportedTypeDeclarations</key>
     <array>
         <dict>

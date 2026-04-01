@@ -1,8 +1,8 @@
-# Timebox for Things 3
+# Slotted
 
-A native macOS companion app for [Things 3](https://culturedcode.com/things/) that adds timeboxing and day planning.
+A native macOS time blocking companion for [Things 3](https://culturedcode.com/things/).
 
-Things 3 is great for managing tasks but lacks a way to plan your day on a timeline. This app reads your Things 3 tasks and lets you drag them onto a visual schedule grid.
+Things 3 is great for managing tasks but lacks a way to plan your day on a timeline. Slotted reads your Things 3 tasks and lets you drag them onto a visual schedule grid.
 
 ## Features
 
@@ -70,7 +70,7 @@ Things 3 is great for managing tasks but lacks a way to plan your day on a timel
 
 ## Your Things 3 Data is Safe
 
-Timebox for Things 3 uses **read-only access** to your Things 3 database. It cannot modify, delete, or corrupt your data.
+Slotted uses **read-only access** to your Things 3 database. It cannot modify, delete, or corrupt your data.
 
 - The database connection is opened with SQLite's `SQLITE_OPEN_READONLY` flag — write attempts are rejected at the database engine level
 - There are no write statements (INSERT, UPDATE, DELETE) against the Things 3 database anywhere in the codebase
