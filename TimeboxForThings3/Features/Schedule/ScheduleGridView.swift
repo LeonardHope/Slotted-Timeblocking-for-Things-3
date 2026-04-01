@@ -189,6 +189,17 @@ struct ScheduleGridView: View {
                     )
                     .padding(.trailing, Theme.timeLabelWidth + 12)
                 }
+
+                // Calendar events (read-only)
+                ForEach(appState.calendarProvider.events.filter { !$0.isAllDay }) { event in
+                    CalendarEventView(event: event)
+                        .offset(
+                            x: Theme.timeLabelWidth + 4,
+                            y: yPosition(for: event.startMinutes)
+                        )
+                        .padding(.trailing, Theme.timeLabelWidth + 12)
+                        .opacity(0.8)
+                }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

@@ -14,6 +14,7 @@ enum AppearanceMode: Int, CaseIterable, Hashable {
 final class AppState {
     var taskProvider: Things3Provider
     var scheduleStore: ScheduleStore?
+    var calendarProvider = CalendarProvider()
     var selectedDate: Date = .now
     var dragDropCoordinator = DragDropCoordinator()
     var selectedBlockID: String?
@@ -47,6 +48,16 @@ final class AppState {
     var clearAtMidnight: Bool {
         didSet { UserDefaults.standard.set(clearAtMidnight, forKey: "clearAtMidnight") }
     }
+    var showCalendarEvents: Bool {
+        didSet {
+            UserDefaults.standard.set(showCalendarEvents, forKey: "showCalendarEvents")
+            if showCalendarEvents {
+                Task { await enableCalendar() }
+            } else {
+                calendarProvider.events = []
+            }
+        }
+    }
     var iCloudSyncEnabled: Bool {
         didSet {
             UserDefaults.standard.set(iCloudSyncEnabled, forKey: "iCloudSyncEnabled")
@@ -64,7 +75,7 @@ final class AppState {
         self.taskProvider = Things3Provider()
 
         let defaults = UserDefaults.standard
-        defaults.register(defaults: ["startHour": 9, "endHour": 17, "appearanceMode": 0, "textScale": 1.0, "hideEmptyCategories": true, "showDates": true, "clearAtMidnight": true, "iCloudSyncEnabled": false])
+        defaults.register(defaults: ["startHour": 9, "endHour": 17, "appearanceMode": 0, "textScale": 1.0, "hideEmptyCategories": true, "showDates": true, "clearAtMidnight": true, "iCloudSyncEnabled": false, "showCalendarEvents": false])
 
         self.startHour = defaults.integer(forKey: "startHour")
         self.endHour = defaults.integer(forKey: "endHour")
@@ -73,6 +84,7 @@ final class AppState {
         self.hideEmptyCategories = defaults.bool(forKey: "hideEmptyCategories")
         self.showDates = defaults.bool(forKey: "showDates")
         self.clearAtMidnight = defaults.bool(forKey: "clearAtMidnight")
+        self.showCalendarEvents = defaults.bool(forKey: "showCalendarEvents")
         self.iCloudSyncEnabled = defaults.bool(forKey: "iCloudSyncEnabled")
         if self.textScale == 0 { self.textScale = 1.0 }
     }
@@ -85,6 +97,10 @@ final class AppState {
             try await scheduleStore?.loadBlocks(for: selectedDate)
         } catch {
             self.error = error
+        }
+
+        if showCalendarEvents {
+            await enableCalendar()
         }
 
         if iCloudSyncEnabled {
@@ -120,6 +136,27 @@ final class AppState {
     func changeDate(to date: Date) async {
         selectedDate = date
         try? await scheduleStore?.loadBlocks(for: date)
+        if showCalendarEvents {
+            calendarProvider.fetchEvents(for: date)
+        }
+    }
+
+    private func enableCalendar() async {
+        await calendarProvider.requestAccess()
+        if calendarProvider.accessGranted {
+            calendarProvider.fetchEvents(for: selectedDate)
+            // Re-fetch when calendar changes
+            NotificationCenter.default.addObserver(
+                forName: .EKEventStoreChanged,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                Task { @MainActor [weak self] in
+                    guard let self, self.showCalendarEvents else { return }
+                    self.calendarProvider.fetchEvents(for: self.selectedDate)
+                }
+            }
+        }
     }
 
     private func startSyncEngine() async {

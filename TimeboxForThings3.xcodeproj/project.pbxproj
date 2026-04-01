@@ -20,9 +20,11 @@
 		3CB738E1A50FD81E4A213575 /* TaskItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8713C4B8B1D2383378675FF /* TaskItem.swift */; };
 		4FD0C56104DB8D0868FDAB48 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA53984D2E6F7805E525EF5 /* SettingsView.swift */; };
 		625071635E938746094940C8 /* TaskCategorizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7AEE061F235CA189E773C09 /* TaskCategorizationTests.swift */; };
+		6AEBF672214C5F5B115881E7 /* CalendarProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47EEFEF7EED5200B4D06276B /* CalendarProvider.swift */; };
 		734E71F30A4F7E1471FB3A4D /* TaskCategorySection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4528BB1E04C8197340BA2E9 /* TaskCategorySection.swift */; };
 		77856F2864F90B1BC5CF4A06 /* SummaryBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5026BA20AFA7BF9793186B4 /* SummaryBarView.swift */; };
 		7B527ABBF4C4BFA244C065EE /* TaskRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9B3F2746FB31C68CFCD1659 /* TaskRowView.swift */; };
+		80E6A4ECBC3E539A9CE00428 /* CalendarEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6D71B604CA0AF6520A53920 /* CalendarEventView.swift */; };
 		868D74A7C09DB1C5CCED487C /* CloudKitBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F441E2638A8679A2E52D2F0 /* CloudKitBridge.swift */; };
 		972DF9D3E327654C76C4EA3B /* ScheduleModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = F200FE713F4A63DD87711ACA /* ScheduleModels.swift */; };
 		97CAE413DDCDD6D0CCD3C49B /* TaskProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC0AA55E3BFB7761B28F44EA /* TaskProvider.swift */; };
@@ -56,10 +58,11 @@
 
 /* Begin PBXFileReference section */
 		06390938CC9AE3DBC4BFC50C /* Things3Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Things3Models.swift; sourceTree = "<group>"; };
-		074C23CA94E7851336EDDFEE /* Timebox for Things 3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Timebox for Things 3.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		074C23CA94E7851336EDDFEE /* TimeboxForThings3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TimeboxForThings3.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1380041A7F0B046E373D7EC4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		22B3B96EF5B317240E4DACB0 /* StandaloneBlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandaloneBlockView.swift; sourceTree = "<group>"; };
 		3F413CD1EEA1BA3609FF86F9 /* TaskBlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskBlockView.swift; sourceTree = "<group>"; };
+		47EEFEF7EED5200B4D06276B /* CalendarProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarProvider.swift; sourceTree = "<group>"; };
 		509F161E16D8789884D8C4E1 /* NowLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowLineView.swift; sourceTree = "<group>"; };
 		587635B97940EDD8F5041A45 /* TagInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagInfo.swift; sourceTree = "<group>"; };
 		5B90FED346A412DC56B39F39 /* Things3DateDecoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Things3DateDecoderTests.swift; sourceTree = "<group>"; };
@@ -71,6 +74,7 @@
 		94A2A252A790007DE552CC35 /* ProjectInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectInfo.swift; sourceTree = "<group>"; };
 		9B8070ED18AFFD23E729C3C3 /* DropTargetGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropTargetGrid.swift; sourceTree = "<group>"; };
 		A5026BA20AFA7BF9793186B4 /* SummaryBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryBarView.swift; sourceTree = "<group>"; };
+		A6D71B604CA0AF6520A53920 /* CalendarEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarEventView.swift; sourceTree = "<group>"; };
 		A7AEE061F235CA189E773C09 /* TaskCategorizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCategorizationTests.swift; sourceTree = "<group>"; };
 		AE2194AC270FC42C75E6A629 /* DragDropCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragDropCoordinator.swift; sourceTree = "<group>"; };
 		AF47072A58805D42BE40F919 /* ProjectColorGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectColorGenerator.swift; sourceTree = "<group>"; };
@@ -193,6 +197,7 @@
 			isa = PBXGroup;
 			children = (
 				DC0AA55E3BFB7761B28F44EA /* TaskProvider.swift */,
+				E68B4D9A336E3FB178A480EC /* Calendar */,
 				EB0F44A02B20FFD1A4C391B1 /* Models */,
 				C240B60EC9FD94CA6E27D32C /* Schedule */,
 				2BD658681637442B84CAD4FE /* Things3 */,
@@ -203,6 +208,7 @@
 		B9878BB285F524E474A8C6C4 /* Schedule */ = {
 			isa = PBXGroup;
 			children = (
+				A6D71B604CA0AF6520A53920 /* CalendarEventView.swift */,
 				509F161E16D8789884D8C4E1 /* NowLineView.swift */,
 				D79780AA7AE3AAD4F7FF5CAA /* ScheduleGridView.swift */,
 				DFA53984D2E6F7805E525EF5 /* SettingsView.swift */,
@@ -216,7 +222,7 @@
 		BBBCE1ECDD16FC59CF4F88B3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				074C23CA94E7851336EDDFEE /* Timebox for Things 3.app */,
+				074C23CA94E7851336EDDFEE /* TimeboxForThings3.app */,
 				7ABD73A7A737C1C1465974F3 /* TimeboxForThings3Tests.xctest */,
 			);
 			name = Products;
@@ -232,6 +238,14 @@
 				60205EE156895FE90E2431D9 /* ScheduleSyncEngine.swift */,
 			);
 			path = Schedule;
+			sourceTree = "<group>";
+		};
+		E68B4D9A336E3FB178A480EC /* Calendar */ = {
+			isa = PBXGroup;
+			children = (
+				47EEFEF7EED5200B4D06276B /* CalendarProvider.swift */,
+			);
+			path = Calendar;
 			sourceTree = "<group>";
 		};
 		EB0F44A02B20FFD1A4C391B1 /* Models */ = {
@@ -309,7 +323,7 @@
 				709DDCE354B9C84A5AA3F955 /* GRDB */,
 			);
 			productName = TimeboxForThings3;
-			productReference = 074C23CA94E7851336EDDFEE /* Timebox for Things 3.app */;
+			productReference = 074C23CA94E7851336EDDFEE /* TimeboxForThings3.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -319,7 +333,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 2640;
+				LastUpgradeCheck = 1630;
 				TargetAttributes = {
 					D6CD3B7C383D9D6DCE524CBC = {
 						DevelopmentTeam = 5YJPT693C8;
@@ -376,6 +390,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				EBB46E7FFAA632013272270E /* AppState.swift in Sources */,
+				80E6A4ECBC3E539A9CE00428 /* CalendarEventView.swift in Sources */,
+				6AEBF672214C5F5B115881E7 /* CalendarProvider.swift in Sources */,
 				868D74A7C09DB1C5CCED487C /* CloudKitBridge.swift in Sources */,
 				2574A949F028298A0FED8D1E /* ContentView.swift in Sources */,
 				33B7DF425CDD0100502869BA /* DragDropCoordinator.swift in Sources */,
@@ -429,10 +445,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 5YJPT693C8;
 				ENABLE_APP_SANDBOX = NO;
-				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TimeboxForThings3/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Timebox for Things 3";
@@ -485,11 +499,9 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -503,7 +515,6 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -515,7 +526,6 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -563,11 +573,9 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -588,7 +596,6 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -600,7 +607,6 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -623,10 +629,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 5YJPT693C8;
 				ENABLE_APP_SANDBOX = NO;
-				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TimeboxForThings3/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Timebox for Things 3";
