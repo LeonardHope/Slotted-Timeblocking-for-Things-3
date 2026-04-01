@@ -126,10 +126,10 @@ struct ScheduleGridView: View {
             ForEach(appState.calendarProvider.events.filter { !$0.isAllDay }) { event in
                 CalendarEventView(event: event)
                     .offset(
-                        x: Theme.timeLabelWidth,
+                        x: Theme.timeLabelWidth + 4,
                         y: yPosition(for: event.startMinutes)
                     )
-                    .padding(.trailing, Theme.timeLabelWidth)
+                    .padding(.trailing, Theme.timeLabelWidth + 12)
             }
         }
     }

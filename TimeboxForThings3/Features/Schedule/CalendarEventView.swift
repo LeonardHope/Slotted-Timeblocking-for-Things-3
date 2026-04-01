@@ -1,38 +1,48 @@
 import SwiftUI
 
-/// A calendar event rendered as a background band on the schedule grid.
+/// A read-only calendar event block on the schedule grid.
 struct CalendarEventView: View {
     let event: CalendarEvent
     @Environment(\.textScale) private var textScale
 
     private var ppm: CGFloat { Theme.pointsPerMinute }
     private var blockHeight: CGFloat { CGFloat(event.duration) * ppm }
+    private var radius: CGFloat { min(8, blockHeight / 6) }
     private var color: Color { Color(cgColor: event.calendarColor) }
 
     var body: some View {
         ZStack(alignment: .leading) {
-            // Background band
-            Rectangle()
-                .fill(color.opacity(0.08))
+            RoundedRectangle(cornerRadius: radius)
+                .fill(color.opacity(0.10))
+                .overlay(
+                    RoundedRectangle(cornerRadius: radius)
+                        .strokeBorder(style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                        .foregroundStyle(color.opacity(0.35))
+                )
 
             // Left accent bar
-            Rectangle()
-                .fill(color.opacity(0.5))
-                .frame(width: 3)
+            HStack(spacing: 0) {
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(color.opacity(0.6))
+                    .frame(width: 3)
+                    .padding(.vertical, 4)
+                Spacer()
+            }
 
-            // Text
+            // Content
             VStack(alignment: .leading, spacing: 1) {
                 Text(event.title)
-                    .font(.system(size: 10 * textScale))
-                    .foregroundStyle(Theme.textTertiary)
-                    .lineLimit(1)
+                    .font(.system(size: 11 * textScale, weight: .medium))
+                    .foregroundStyle(Theme.textSecondary)
+                    .lineLimit(event.duration <= 30 ? 1 : 2)
                 if event.duration > 30 {
                     Text(timeRange)
                         .font(.system(size: 9 * textScale))
-                        .foregroundStyle(Theme.textTertiary.opacity(0.7))
+                        .foregroundStyle(Theme.textTertiary)
                 }
             }
-            .padding(.leading, 8)
+            .padding(.leading, 10)
+            .padding(.trailing, 6)
         }
         .frame(height: blockHeight)
         .allowsHitTesting(false)
