@@ -3,7 +3,6 @@ import SwiftUI
 /// Shown when the app can't find the Things 3 database.
 struct OnboardingView: View {
     let onGrantAccess: () -> Void
-    let onSkip: () -> Void
 
     var body: some View {
         VStack(spacing: 24) {
@@ -23,19 +22,12 @@ struct OnboardingView: View {
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 400)
 
-            VStack(spacing: 12) {
-                Button(action: onGrantAccess) {
-                    Label("Select Things 3 Database", systemImage: "folder")
-                        .frame(maxWidth: 250)
-                }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
-
-                Button("Skip for now", action: onSkip)
-                    .buttonStyle(.plain)
-                    .foregroundStyle(.secondary)
-                    .font(.callout)
+            Button(action: onGrantAccess) {
+                Label("Select Things 3 Database", systemImage: "folder")
+                    .frame(maxWidth: 250)
             }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
 
             VStack(alignment: .leading, spacing: 8) {
                 Label("How to find the database:", systemImage: "questionmark.circle")

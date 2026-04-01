@@ -9,9 +9,6 @@ struct ContentView: View {
                 OnboardingView(
                     onGrantAccess: {
                         Task { await appState.grantDatabaseAccess() }
-                    },
-                    onSkip: {
-                        appState.needsOnboarding = false
                     }
                 )
             } else {
