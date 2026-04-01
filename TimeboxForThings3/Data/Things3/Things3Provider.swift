@@ -18,6 +18,7 @@ final class Things3Provider: TaskProvider {
     private var customDatabasePath: String?
     private let logger = Logger(subsystem: "com.timebox.TimeboxForThings3", category: "things3")
 
+    /// Set a custom database path (e.g., from user-granted file access).
     func setDatabasePath(_ path: String) {
         customDatabasePath = path
     }
