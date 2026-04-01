@@ -9,6 +9,7 @@ struct TaskCategorySection: View {
     @State private var expandedProjects: Set<String> = []
     @State private var didSetDefaults = false
     @Environment(\.textScale) private var textScale
+    @Environment(AppState.self) private var appState
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -42,22 +43,27 @@ struct TaskCategorySection: View {
 
             if isExpanded {
                 let hierarchy = buildHierarchy(tasks)
+                let hideEmpty = appState.hideEmptyProjects
                 ForEach(hierarchy) { areaGroup in
-                    // Area header (if named)
-                    if let areaName = areaGroup.areaName {
-                        areaHeader(areaName, key: areaGroup.id)
-                    }
+                    let visibleProjects = hideEmpty
+                        ? areaGroup.projects.filter { !$0.tasks.isEmpty }
+                        : areaGroup.projects
 
-                    if expandedAreas.contains(areaGroup.id) {
-                        ForEach(areaGroup.projects) { projectGroup in
-                            // Project header (if named)
-                            if let projectName = projectGroup.projectName {
-                                projectHeader(projectName, key: projectGroup.id, indented: areaGroup.areaName != nil)
-                            }
+                    if !hideEmpty || !visibleProjects.isEmpty {
+                        if let areaName = areaGroup.areaName {
+                            areaHeader(areaName, key: areaGroup.id)
+                        }
 
-                            if expandedProjects.contains(projectGroup.id) {
-                                ForEach(projectGroup.tasks) { task in
-                                    TaskRowView(task: task)
+                        if expandedAreas.contains(areaGroup.id) {
+                            ForEach(visibleProjects) { projectGroup in
+                                if let projectName = projectGroup.projectName {
+                                    projectHeader(projectName, key: projectGroup.id, indented: areaGroup.areaName != nil)
+                                }
+
+                                if expandedProjects.contains(projectGroup.id) {
+                                    ForEach(projectGroup.tasks) { task in
+                                        TaskRowView(task: task)
+                                    }
                                 }
                             }
                         }
