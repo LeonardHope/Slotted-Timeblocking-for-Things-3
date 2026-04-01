@@ -154,8 +154,19 @@ struct TaskCategorySection: View {
             areaMap[areaKey]![projectKey]!.append(task)
         }
 
-        return areaOrder.map { areaKey in
-            let projects = (projectOrder[areaKey] ?? []).map { projectKey in
+        let sortedAreas = areaOrder.sorted { a, b in
+            if a == "__no_area__" { return false }
+            if b == "__no_area__" { return true }
+            return a.localizedCaseInsensitiveCompare(b) == .orderedAscending
+        }
+
+        return sortedAreas.map { areaKey in
+            let sortedProjects = (projectOrder[areaKey] ?? []).sorted { a, b in
+                if a == "__no_project__" { return false }
+                if b == "__no_project__" { return true }
+                return a.localizedCaseInsensitiveCompare(b) == .orderedAscending
+            }
+            let projects = sortedProjects.map { projectKey in
                 ProjectGroup(
                     projectName: projectKey == "__no_project__" ? nil : projectKey,
                     tasks: areaMap[areaKey]?[projectKey] ?? []
