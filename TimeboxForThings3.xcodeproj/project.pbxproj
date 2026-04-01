@@ -60,7 +60,7 @@
 
 /* Begin PBXFileReference section */
 		06390938CC9AE3DBC4BFC50C /* Things3Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Things3Models.swift; sourceTree = "<group>"; };
-		074C23CA94E7851336EDDFEE /* TimeboxForThings3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TimeboxForThings3.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		074C23CA94E7851336EDDFEE /* Slotted.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Slotted.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1380041A7F0B046E373D7EC4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		22B3B96EF5B317240E4DACB0 /* StandaloneBlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandaloneBlockView.swift; sourceTree = "<group>"; };
 		3F413CD1EEA1BA3609FF86F9 /* TaskBlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskBlockView.swift; sourceTree = "<group>"; };
@@ -236,7 +236,7 @@
 		BBBCE1ECDD16FC59CF4F88B3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				074C23CA94E7851336EDDFEE /* TimeboxForThings3.app */,
+				074C23CA94E7851336EDDFEE /* Slotted.app */,
 				7ABD73A7A737C1C1465974F3 /* TimeboxForThings3Tests.xctest */,
 			);
 			name = Products;
@@ -337,7 +337,7 @@
 				709DDCE354B9C84A5AA3F955 /* GRDB */,
 			);
 			productName = TimeboxForThings3;
-			productReference = 074C23CA94E7851336EDDFEE /* TimeboxForThings3.app */;
+			productReference = 074C23CA94E7851336EDDFEE /* Slotted.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -347,7 +347,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1630;
+				LastUpgradeCheck = 2640;
 				TargetAttributes = {
 					D6CD3B7C383D9D6DCE524CBC = {
 						DevelopmentTeam = 5YJPT693C8;
@@ -461,8 +461,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 5YJPT693C8;
 				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TimeboxForThings3/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Slotted;
@@ -515,9 +517,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -531,6 +535,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -542,6 +547,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -589,9 +595,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -612,6 +620,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -623,6 +632,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -645,8 +655,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 5YJPT693C8;
 				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TimeboxForThings3/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Slotted;

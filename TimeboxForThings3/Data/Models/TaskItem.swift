@@ -31,7 +31,7 @@ struct TaskItem: Identifiable, Hashable {
         return f
     }()
 
-    private static nonisolated(unsafe) let dateFormatter: DateFormatter = {
+    private static let dateFormatter: DateFormatter = {
         let f = DateFormatter()
         f.dateFormat = "MMM d"
         return f
