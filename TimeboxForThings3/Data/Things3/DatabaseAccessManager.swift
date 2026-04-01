@@ -34,6 +34,8 @@ final class DatabaseAccessManager {
         panel.allowsMultipleSelection = false
         panel.canChooseDirectories = false
         panel.canChooseFiles = true
+        panel.showsHiddenFiles = true
+        panel.treatsFilePackagesAsDirectories = true
         panel.directoryURL = suggestedDirectory()
 
         guard panel.runModal() == .OK, let url = panel.url else {
