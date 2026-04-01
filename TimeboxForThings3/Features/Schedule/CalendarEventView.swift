@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// A read-only calendar event block on the schedule grid.
+/// A read-only calendar event block with diagonal hatching.
 struct CalendarEventView: View {
     let event: CalendarEvent
     @Environment(\.textScale) private var textScale
@@ -12,12 +12,17 @@ struct CalendarEventView: View {
 
     var body: some View {
         ZStack(alignment: .leading) {
+            // Fill + hatching
             RoundedRectangle(cornerRadius: radius)
-                .fill(color.opacity(0.10))
+                .fill(color.opacity(0.08))
+                .overlay(
+                    DiagonalStripes(spacing: 8, lineWidth: 0.5)
+                        .foregroundStyle(color.opacity(0.12))
+                        .clipShape(RoundedRectangle(cornerRadius: radius))
+                )
                 .overlay(
                     RoundedRectangle(cornerRadius: radius)
-                        .strokeBorder(style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
-                        .foregroundStyle(color.opacity(0.35))
+                        .strokeBorder(color.opacity(0.3), lineWidth: 1)
                 )
 
             // Left accent bar
@@ -59,5 +64,22 @@ struct CalendarEventView: View {
         let period = h >= 12 ? "pm" : "am"
         let hour12 = h == 0 ? 12 : (h > 12 ? h - 12 : h)
         return m == 0 ? "\(hour12)\(period)" : "\(hour12):\(String(format: "%02d", m))\(period)"
+    }
+}
+
+/// Diagonal stripe pattern.
+struct DiagonalStripes: Shape {
+    let spacing: CGFloat
+    let lineWidth: CGFloat
+
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        let count = Int((rect.width + rect.height) / spacing) + 1
+        for i in 0..<count {
+            let offset = CGFloat(i) * spacing
+            path.move(to: CGPoint(x: offset, y: 0))
+            path.addLine(to: CGPoint(x: offset - rect.height, y: rect.height))
+        }
+        return path.strokedPath(StrokeStyle(lineWidth: lineWidth))
     }
 }
