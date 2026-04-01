@@ -29,10 +29,10 @@ struct TaskListView: View {
                         .foregroundStyle(Theme.textSecondary)
                         .frame(maxWidth: .infinity, minHeight: 100)
                 } else {
-                    // Filter out tasks that are already scheduled on the RHS
-                    let scheduled = appState.scheduledTaskUUIDs
-                    let unscheduled = appState.taskProvider.tasks.filter { !scheduled.contains($0.id) }
-                    let grouped = TaskCategorizer.groupByCategory(unscheduled)
+                    let filteredTasks = appState.hideScheduledTasks
+                        ? appState.taskProvider.tasks.filter { !appState.scheduledTaskUUIDs.contains($0.id) }
+                        : appState.taskProvider.tasks
+                    let grouped = TaskCategorizer.groupByCategory(filteredTasks)
                     if appState.hideEmptyCategories {
                         ForEach(grouped, id: \.category) { group in
                             TaskCategorySection(
