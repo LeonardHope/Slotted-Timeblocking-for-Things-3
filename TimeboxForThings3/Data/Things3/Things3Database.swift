@@ -79,7 +79,7 @@ final class Things3Database {
                     HEADING.title AS headingTitle
                 FROM TMTask AS TASK
                 LEFT JOIN TMTask PROJECT ON TASK.project = PROJECT.uuid
-                LEFT JOIN TMArea AREA ON TASK.area = AREA.uuid
+                LEFT JOIN TMArea AREA ON COALESCE(TASK.area, PROJECT.area) = AREA.uuid
                 LEFT JOIN TMTask HEADING ON TASK.heading = HEADING.uuid
                 LEFT JOIN TMTask HEADING_PROJECT ON HEADING.project = HEADING_PROJECT.uuid
                 WHERE TASK.type = 0

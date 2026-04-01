@@ -34,6 +34,12 @@ enum ScheduleMigrations {
             try db.create(index: "idx_standaloneBlock_date", on: "standaloneBlock", columns: ["date"])
         }
 
+        migrator.registerMigration("v2_timeBlock_colorIndex") { db in
+            try db.alter(table: "timeBlock") { t in
+                t.add(column: "colorIndex", .integer)
+            }
+        }
+
         return migrator
     }
 }

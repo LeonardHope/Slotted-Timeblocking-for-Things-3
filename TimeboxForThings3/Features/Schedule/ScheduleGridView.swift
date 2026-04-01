@@ -140,6 +140,12 @@ struct ScheduleGridView: View {
                             updated.startTime = self.clampStart(newStart, duration: newDuration)
                             updated.duration = newDuration
                             try? store.updateTimeBlock(updated)
+                        },
+                        onColorCycle: {
+                            var updated = block
+                            let current = block.colorIndex ?? 0
+                            updated.colorIndex = (current + 1) % 10
+                            try? store.updateTimeBlock(updated)
                         }
                     )
                     .offset(

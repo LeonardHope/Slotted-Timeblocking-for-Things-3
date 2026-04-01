@@ -6,6 +6,7 @@ struct TaskBlockView: View {
     let onDelete: () -> Void
     let onMove: (Int) -> Void
     let onResize: (Int, Int) -> Void
+    let onColorCycle: () -> Void
 
     @State private var isHovering = false
     @State private var dragMode: DragMode = .none
@@ -44,8 +45,17 @@ struct TaskBlockView: View {
         }
     }
 
+    private static let palette: [Color] = [.blue, .green, .orange, .purple, .pink, .teal, .red, .yellow, .indigo, .mint]
+
+    private var blockColor: Color {
+        if let idx = block.colorIndex {
+            return Self.palette[idx % Self.palette.count]
+        }
+        return taskItem?.projectUUID.map { ProjectColorGenerator.color(for: $0) } ?? .gray
+    }
+
     var body: some View {
-        let color = taskItem?.projectUUID.map { ProjectColorGenerator.color(for: $0) } ?? .gray
+        let color = blockColor
 
         RoundedRectangle(cornerRadius: radius)
             .fill(color.opacity(0.25))
@@ -74,15 +84,24 @@ struct TaskBlockView: View {
                 }
                 .padding(.horizontal, 8)
             }
-            // Delete button — vertically centered
+            // Color dot + delete button on hover
             .overlay(alignment: .trailing) {
                 if isHovering && dragMode == .none {
-                    Button(action: onDelete) {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 12))
-                            .foregroundStyle(Theme.textTertiary)
+                    HStack(spacing: 4) {
+                        Button(action: onColorCycle) {
+                            Circle()
+                                .fill(color)
+                                .frame(width: 10, height: 10)
+                        }
+                        .buttonStyle(.plain)
+                        Button(action: onDelete) {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.system(size: 12))
+                                .foregroundStyle(Theme.textTertiary)
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain).padding(.trailing, 4)
+                    .padding(.trailing, 4)
                 }
             }
             // Selection border
