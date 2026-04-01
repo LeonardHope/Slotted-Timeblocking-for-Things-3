@@ -74,10 +74,15 @@ struct StandaloneBlockView: View {
                             }
                             .onAppear { textFieldFocused = true }
                     } else {
-                        Text(block.title)
-                            .font(.system(size: 12 * textScale)).italic()
-                            .foregroundStyle(Theme.textPrimary)
-                            .onTapGesture(count: 2) { editTitle = block.title; isEditing = true }
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text(block.title)
+                                .font(.system(size: 12 * textScale)).italic()
+                                .foregroundStyle(Theme.textPrimary)
+                                .onTapGesture(count: 2) { editTitle = block.title; isEditing = true }
+                            Text(block.timeRangeDisplay)
+                                .font(.system(size: 10 * textScale))
+                                .foregroundStyle(Theme.textSecondary)
+                        }
                     }
                     Spacer()
                 }

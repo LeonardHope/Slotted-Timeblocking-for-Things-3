@@ -104,7 +104,7 @@ struct ScheduleGridView: View {
         return startMinutes + Int(yOffset / Theme.pointsPerMinute)
     }
 
-    private func snapToGrid(_ minutes: Int, gridSize: Int = 30) -> Int {
+    private func snapToGrid(_ minutes: Int, gridSize: Int = 15) -> Int {
         (minutes / gridSize) * gridSize
     }
 
