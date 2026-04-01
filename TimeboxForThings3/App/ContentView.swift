@@ -16,6 +16,8 @@ struct ContentView: View {
                     TaskListView()
                 } detail: {
                     ScheduleGridView()
+                        .toolbar(removing: .title)
+                        .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
                 }
                 .focusable()
                 .focusEffectDisabled()
