@@ -30,7 +30,7 @@ final class DatabaseAccessManager {
         panel.title = "Select Your Things 3 Database"
         panel.message = "Navigate to the Things 3 database folder and select \"main.sqlite\".\n\nTypical location: ~/Library/Group Containers/JLMPQHK86H.com.culturedcode.ThingsMac/"
         panel.prompt = "Grant Access"
-        panel.allowedContentTypes = [UTType(filenameExtension: "sqlite")].compactMap { $0 }
+        panel.allowedContentTypes = [.data]  // Allow all files — we validate after selection
         panel.allowsMultipleSelection = false
         panel.canChooseDirectories = false
         panel.canChooseFiles = true
