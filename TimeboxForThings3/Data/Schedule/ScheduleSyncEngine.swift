@@ -224,8 +224,8 @@ private final class SyncDelegate: CKSyncEngineDelegate {
                 switch record.recordType {
                 case "TimeBlock":
                     if let block = CloudKitBridge.timeBlock(from: record) {
-                        // If local is newer, re-push local
-                        if let existing = store.timeBlocks.first(where: { $0.id == block.id }),
+                        // Check DB (not just in-memory) for local version
+                        if let existing = try? store.fetchTimeBlock(id: block.id),
                            existing.updatedAt > block.updatedAt {
                             engine?.state.add(pendingRecordZoneChanges: [.saveRecord(record.recordID)])
                         } else {
@@ -234,7 +234,7 @@ private final class SyncDelegate: CKSyncEngineDelegate {
                     }
                 case "StandaloneBlock":
                     if let block = CloudKitBridge.standaloneBlock(from: record) {
-                        if let existing = store.standaloneBlocks.first(where: { $0.id == block.id }),
+                        if let existing = try? store.fetchStandaloneBlock(id: block.id),
                            existing.updatedAt > block.updatedAt {
                             engine?.state.add(pendingRecordZoneChanges: [.saveRecord(record.recordID)])
                         } else {

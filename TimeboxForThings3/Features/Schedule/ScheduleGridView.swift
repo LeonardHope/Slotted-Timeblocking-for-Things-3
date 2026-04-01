@@ -108,6 +108,13 @@ struct ScheduleGridView: View {
         (minutes / gridSize) * gridSize
     }
 
+    /// Clamp a block's start time to the visible schedule bounds.
+    private func clampStart(_ start: Int, duration: Int) -> Int {
+        let minMinutes = appState.startHour * 60
+        let maxMinutes = appState.endHour * 60
+        return max(minMinutes, min(start, maxMinutes - duration))
+    }
+
     // MARK: - Blocks layer
 
     private var blocksLayer: some View {
@@ -125,12 +132,12 @@ struct ScheduleGridView: View {
                         },
                         onMove: { newStart in
                             var updated = block
-                            updated.startTime = newStart
+                            updated.startTime = self.clampStart(newStart, duration: block.duration)
                             try? store.updateTimeBlock(updated)
                         },
                         onResize: { newStart, newDuration in
                             var updated = block
-                            updated.startTime = newStart
+                            updated.startTime = self.clampStart(newStart, duration: newDuration)
                             updated.duration = newDuration
                             try? store.updateTimeBlock(updated)
                         }
@@ -160,12 +167,12 @@ struct ScheduleGridView: View {
                         },
                         onMove: { newStart in
                             var updated = block
-                            updated.startTime = newStart
+                            updated.startTime = self.clampStart(newStart, duration: block.duration)
                             try? store.updateStandaloneBlock(updated)
                         },
                         onResize: { newStart, newDuration in
                             var updated = block
-                            updated.startTime = newStart
+                            updated.startTime = self.clampStart(newStart, duration: newDuration)
                             updated.duration = newDuration
                             try? store.updateStandaloneBlock(updated)
                         }
