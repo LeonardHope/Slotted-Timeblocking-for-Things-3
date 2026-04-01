@@ -29,17 +29,25 @@ struct OnboardingView: View {
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
 
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 6) {
                 Label("How to find the database:", systemImage: "questionmark.circle")
                     .font(.body.weight(.medium))
                     .foregroundStyle(.primary)
 
-                Text("1. Click \"Select Things 3 Database\" above\n2. Navigate to: ~/Library/Group Containers/\n3. Open the folder starting with \"JLMPQHK86H\"\n4. Open \"ThingsData-...\"\n5. Select the \"Things Database.thingsdatabase\" folder and click Grant Access")
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-                    .padding(.leading, 28)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("1. Click the button above")
+                    Text("2. Go to ~/Library/Group Containers/")
+                    Text("3. Open the \"JLMPQHK86H...\" folder")
+                    Text("4. Open \"ThingsData-...\"")
+                    Text("5. Select \"Things Database.thingsdatabase\"")
+                    Text("6. Click Grant Access")
+                }
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .padding(.leading, 28)
             }
-            .frame(maxWidth: 400, alignment: .leading)
+            .frame(alignment: .leading)
+            .fixedSize(horizontal: true, vertical: false)
 
             Spacer()
         }
