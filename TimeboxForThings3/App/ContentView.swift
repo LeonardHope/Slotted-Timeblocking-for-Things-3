@@ -4,21 +4,34 @@ struct ContentView: View {
     @Environment(AppState.self) private var appState
 
     var body: some View {
-        NavigationSplitView {
-            TaskListView()
-        } detail: {
-            ScheduleGridView()
-        }
-        .focusable()
-        .focusEffectDisabled()
-        .onKeyPress(.upArrow) {
-            moveSelectedBlock(by: -15)
-        }
-        .onKeyPress(.downArrow) {
-            moveSelectedBlock(by: 15)
-        }
-        .onKeyPress(.delete) {
-            deleteSelectedBlock()
+        Group {
+            if appState.needsOnboarding {
+                OnboardingView(
+                    onGrantAccess: {
+                        Task { await appState.grantDatabaseAccess() }
+                    },
+                    onSkip: {
+                        appState.needsOnboarding = false
+                    }
+                )
+            } else {
+                NavigationSplitView {
+                    TaskListView()
+                } detail: {
+                    ScheduleGridView()
+                }
+                .focusable()
+                .focusEffectDisabled()
+                .onKeyPress(.upArrow) {
+                    moveSelectedBlock(by: -15)
+                }
+                .onKeyPress(.downArrow) {
+                    moveSelectedBlock(by: 15)
+                }
+                .onKeyPress(.delete) {
+                    deleteSelectedBlock()
+                }
+            }
         }
         .task {
             await appState.initialize()
