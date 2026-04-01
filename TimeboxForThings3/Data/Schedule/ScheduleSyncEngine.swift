@@ -50,8 +50,9 @@ final class ScheduleSyncEngine {
         let logger = Logger(subsystem: "com.timebox.TimeboxForThings3", category: "sync")
         let database = CloudKitBridge.container.privateCloudDatabase
 
-        // Clear local sync state first
+        // Clear local sync state and cache
         try? FileManager.default.removeItem(at: stateURL)
+        try? FileManager.default.removeItem(at: cacheURL)
 
         // Delete the CloudKit zone (removes all server records)
         do {
@@ -106,6 +107,32 @@ final class ScheduleSyncEngine {
         guard let data = try? JSONEncoder().encode(serialization) else { return }
         try? data.write(to: stateURL, options: .atomic)
     }
+
+    // MARK: - Server record cache persistence
+
+    private static var cacheURL: URL {
+        let dir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+            .appendingPathComponent("TimeboxForThings3", isDirectory: true)
+        return dir.appendingPathComponent("sync-record-cache.data")
+    }
+
+    fileprivate static func loadCachedRecords() -> [CKRecord.ID: CKRecord] {
+        guard let data = try? Data(contentsOf: cacheURL),
+              let records = try? NSKeyedUnarchiver.unarchivedArrayOfObjects(ofClass: CKRecord.self, from: data)
+        else { return [:] }
+        var cache: [CKRecord.ID: CKRecord] = [:]
+        for record in records {
+            cache[record.recordID] = record
+        }
+        return cache
+    }
+
+    fileprivate static func saveCachedRecords(_ cache: [CKRecord.ID: CKRecord]) {
+        let records = Array(cache.values)
+        guard let data = try? NSKeyedArchiver.archivedData(withRootObject: records, requiringSecureCoding: true)
+        else { return }
+        try? data.write(to: cacheURL, options: .atomic)
+    }
 }
 
 // MARK: - CKSyncEngineDelegate
@@ -116,7 +143,7 @@ private final class SyncDelegate: CKSyncEngineDelegate {
     weak var engine: CKSyncEngine?
     private let logger = Logger(subsystem: "com.timebox.TimeboxForThings3", category: "sync")
     /// Cached server records with system fields (etags). Used as base for updates.
-    private var cachedServerRecords: [CKRecord.ID: CKRecord] = [:]
+    private var cachedServerRecords: [CKRecord.ID: CKRecord] = ScheduleSyncEngine.loadCachedRecords()
 
     init(store: ScheduleStore) {
         self.store = store
@@ -261,6 +288,8 @@ private final class SyncDelegate: CKSyncEngineDelegate {
                 break
             }
         }
+
+        persistCache()
     }
 
     // MARK: - Handle sent changes
@@ -286,6 +315,12 @@ private final class SyncDelegate: CKSyncEngineDelegate {
                 logger.error("Sync save failed: \(failure.error)")
             }
         }
+
+        persistCache()
+    }
+
+    private func persistCache() {
+        ScheduleSyncEngine.saveCachedRecords(cachedServerRecords)
     }
 }
 
