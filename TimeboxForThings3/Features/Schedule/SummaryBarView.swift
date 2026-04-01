@@ -66,7 +66,7 @@ struct SummaryBarView: View {
 
     private var dateString: String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "EEEE, MMM d"
+        formatter.dateFormat = "EEEE, MMMM d"
         return formatter.string(from: appState.selectedDate)
     }
 

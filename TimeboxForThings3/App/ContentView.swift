@@ -12,12 +12,14 @@ struct ContentView: View {
                     }
                 )
             } else {
-                NavigationSplitView {
+                HStack(spacing: 0) {
                     TaskListView()
-                } detail: {
+                        .frame(width: 320)
+
+                    Divider()
+
                     ScheduleGridView()
-                        .toolbar(removing: .title)
-                        .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
+                        .frame(maxWidth: .infinity)
                 }
                 .focusable()
                 .focusEffectDisabled()
