@@ -18,6 +18,7 @@ struct ContentView: View {
                 } detail: {
                     ScheduleGridView()
                         .navigationTitle("")
+                        .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
                 }
                 .focusable()
                 .focusEffectDisabled()
