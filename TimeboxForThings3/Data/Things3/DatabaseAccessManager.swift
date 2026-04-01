@@ -38,12 +38,10 @@ final class DatabaseAccessManager {
         panel.treatsFilePackagesAsDirectories = true
         panel.directoryURL = suggestedDirectory()
 
-        guard panel.runModal() == .OK, let url = panel.url else {
-            return nil
-        }
+        let validator = OpenPanelValidator()
+        panel.delegate = validator
 
-        // Verify it's a valid Things 3 database
-        guard url.lastPathComponent == "main.sqlite" else {
+        guard panel.runModal() == .OK, let url = panel.url else {
             return nil
         }
 
@@ -132,5 +130,18 @@ final class DatabaseAccessManager {
             return groupContainers
         }
         return home.appendingPathComponent("Library")
+    }
+}
+
+/// Validates that the selected file is main.sqlite before enabling Grant Access.
+private class OpenPanelValidator: NSObject, NSOpenSavePanelDelegate {
+    func panel(_ sender: Any, shouldEnable url: URL) -> Bool {
+        // Enable directories for navigation
+        var isDir: ObjCBool = false
+        if FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir), isDir.boolValue {
+            return true
+        }
+        // Only enable main.sqlite files
+        return url.lastPathComponent == "main.sqlite"
     }
 }
