@@ -1,44 +1,41 @@
 import SwiftUI
 
-/// A read-only calendar event block on the schedule grid.
+/// A calendar event rendered as a background band on the schedule grid.
 struct CalendarEventView: View {
     let event: CalendarEvent
     @Environment(\.textScale) private var textScale
 
     private var ppm: CGFloat { Theme.pointsPerMinute }
     private var blockHeight: CGFloat { CGFloat(event.duration) * ppm }
-    private var radius: CGFloat { min(8, blockHeight / 6) }
     private var color: Color { Color(cgColor: event.calendarColor) }
 
     var body: some View {
-        RoundedRectangle(cornerRadius: radius)
-            .fill(color.opacity(0.15))
-            .overlay(
-                RoundedRectangle(cornerRadius: radius)
-                    .strokeBorder(color.opacity(0.4), lineWidth: 1)
-            )
-            .overlay(alignment: .leading) {
-                HStack(spacing: 5) {
-                    RoundedRectangle(cornerRadius: 1.5)
-                        .fill(color)
-                        .frame(width: 3)
-                        .padding(.vertical, 4)
-                    VStack(alignment: .leading, spacing: 1) {
-                        Text(event.title)
-                            .font(.system(size: 11 * textScale, weight: .medium))
-                            .foregroundStyle(Theme.textPrimary)
-                            .lineLimit(event.duration <= 30 ? 1 : 2)
-                        if event.duration > 30 {
-                            Text(timeRange)
-                                .font(.system(size: 10 * textScale))
-                                .foregroundStyle(Theme.textSecondary)
-                        }
-                    }
+        ZStack(alignment: .leading) {
+            // Background band
+            Rectangle()
+                .fill(color.opacity(0.08))
+
+            // Left accent bar
+            Rectangle()
+                .fill(color.opacity(0.5))
+                .frame(width: 3)
+
+            // Text
+            VStack(alignment: .leading, spacing: 1) {
+                Text(event.title)
+                    .font(.system(size: 10 * textScale))
+                    .foregroundStyle(Theme.textTertiary)
+                    .lineLimit(1)
+                if event.duration > 30 {
+                    Text(timeRange)
+                        .font(.system(size: 9 * textScale))
+                        .foregroundStyle(Theme.textTertiary.opacity(0.7))
                 }
-                .padding(.horizontal, 4)
             }
-            .frame(height: blockHeight)
-            .allowsHitTesting(false)
+            .padding(.leading, 8)
+        }
+        .frame(height: blockHeight)
+        .allowsHitTesting(false)
     }
 
     private var timeRange: String {
