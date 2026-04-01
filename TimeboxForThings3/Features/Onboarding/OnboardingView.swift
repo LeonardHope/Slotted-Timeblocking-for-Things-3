@@ -12,7 +12,7 @@ struct OnboardingView: View {
                 .font(.system(size: 56))
                 .foregroundStyle(.blue)
 
-            Text("Welcome to Timebox for Things 3")
+            Text("Welcome to Slotted")
                 .font(.title2.weight(.semibold))
                 .foregroundStyle(.primary)
 

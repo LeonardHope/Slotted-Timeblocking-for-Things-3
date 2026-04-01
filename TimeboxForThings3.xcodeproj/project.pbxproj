@@ -465,7 +465,7 @@
 				ENABLE_APP_SANDBOX = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TimeboxForThings3/Resources/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Timebox for Things 3";
+				INFOPLIST_KEY_CFBundleDisplayName = Slotted;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -474,7 +474,7 @@
 				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.timebox.TimeboxForThings3;
 				PRODUCT_MODULE_NAME = TimeboxForThings3;
-				PRODUCT_NAME = "Timebox for Things 3";
+				PRODUCT_NAME = Slotted;
 				SDKROOT = macosx;
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 6.0;
@@ -551,7 +551,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.timebox.TimeboxForThings3Tests;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 6.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Timebox for Things 3.app/Contents/MacOS/Timebox for Things 3";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Slotted.app/Contents/MacOS/Slotted";
 			};
 			name = Release;
 		};
@@ -632,7 +632,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.timebox.TimeboxForThings3Tests;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 6.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Timebox for Things 3.app/Contents/MacOS/Timebox for Things 3";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Slotted.app/Contents/MacOS/Slotted";
 			};
 			name = Debug;
 		};
@@ -649,7 +649,7 @@
 				ENABLE_APP_SANDBOX = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TimeboxForThings3/Resources/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Timebox for Things 3";
+				INFOPLIST_KEY_CFBundleDisplayName = Slotted;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -658,7 +658,7 @@
 				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.timebox.TimeboxForThings3;
 				PRODUCT_MODULE_NAME = TimeboxForThings3;
-				PRODUCT_NAME = "Timebox for Things 3";
+				PRODUCT_NAME = Slotted;
 				SDKROOT = macosx;
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 6.0;

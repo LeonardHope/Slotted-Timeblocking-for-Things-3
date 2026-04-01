@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "D6CD3B7C383D9D6DCE524CBC"
-               BuildableName = "Timebox for Things 3.app"
+               BuildableName = "Slotted.app"
                BlueprintName = "TimeboxForThings3"
                ReferencedContainer = "container:TimeboxForThings3.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D6CD3B7C383D9D6DCE524CBC"
-            BuildableName = "Timebox for Things 3.app"
+            BuildableName = "Slotted.app"
             BlueprintName = "TimeboxForThings3"
             ReferencedContainer = "container:TimeboxForThings3.xcodeproj">
          </BuildableReference>
@@ -79,7 +79,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D6CD3B7C383D9D6DCE524CBC"
-            BuildableName = "Timebox for Things 3.app"
+            BuildableName = "Slotted.app"
             BlueprintName = "TimeboxForThings3"
             ReferencedContainer = "container:TimeboxForThings3.xcodeproj">
          </BuildableReference>
@@ -96,7 +96,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D6CD3B7C383D9D6DCE524CBC"
-            BuildableName = "Timebox for Things 3.app"
+            BuildableName = "Slotted.app"
             BlueprintName = "TimeboxForThings3"
             ReferencedContainer = "container:TimeboxForThings3.xcodeproj">
          </BuildableReference>
