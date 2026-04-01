@@ -40,11 +40,9 @@ struct CalendarEventView: View {
                     .font(.system(size: 11 * textScale, weight: .medium))
                     .foregroundStyle(Theme.textSecondary)
                     .lineLimit(event.duration <= 30 ? 1 : 2)
-                if event.duration > 30 {
-                    Text(timeRange)
-                        .font(.system(size: 9 * textScale))
-                        .foregroundStyle(Theme.textTertiary)
-                }
+                Text(timeRange)
+                    .font(.system(size: 9 * textScale))
+                    .foregroundStyle(Theme.textTertiary)
             }
             .padding(.leading, 10)
             .padding(.trailing, 6)
