@@ -6,8 +6,6 @@ struct ScheduleGridView: View {
 
     private let topPadding: CGFloat = 12
     private let bottomPadding: CGFloat = 20
-    @State private var dropTargeted = false
-    @State private var dropLocation: CGPoint?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -137,12 +135,12 @@ struct ScheduleGridView: View {
     // MARK: - Blocks layer
 
     private var blocksLayer: some View {
-        let tasksByUUID = Dictionary(grouping: appState.taskProvider.tasks, by: \.id)
+        let tasksByID = Dictionary(uniqueKeysWithValues: appState.taskProvider.tasks.map { ($0.id, $0) })
 
         return ZStack(alignment: .topLeading) {
             if let store = appState.scheduleStore {
                 ForEach(store.timeBlocks) { block in
-                    let task = tasksByUUID[block.taskUUID]?.first
+                    let task = tasksByID[block.taskUUID]
                     TaskBlockView(
                         block: block,
                         taskItem: task,

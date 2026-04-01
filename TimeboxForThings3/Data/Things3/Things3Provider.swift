@@ -1,9 +1,8 @@
 import Foundation
 import Observation
+import os
 
 /// TaskProvider implementation that reads from the Things 3 SQLite database.
-/// Uses file system monitoring on the WAL file to detect changes instantly
-/// instead of polling, with a fallback poll every 30s as a safety net.
 @Observable
 @MainActor
 final class Things3Provider: TaskProvider {
@@ -17,8 +16,8 @@ final class Things3Provider: TaskProvider {
     private var fileMonitor: Things3FileMonitor?
     private var fallbackTimer: Timer?
     private var customDatabasePath: String?
+    private let logger = Logger(subsystem: "com.timebox.TimeboxForThings3", category: "things3")
 
-    /// Set a custom database path (e.g., from user-granted file access).
     func setDatabasePath(_ path: String) {
         customDatabasePath = path
     }
@@ -40,6 +39,7 @@ final class Things3Provider: TaskProvider {
             startFallbackTimer()
         } catch {
             self.error = error
+            logger.error("Failed to start observing Things 3: \(error)")
         }
     }
 
@@ -67,33 +67,23 @@ final class Things3Provider: TaskProvider {
 
             self.projects = projectRecords.compactMap { record in
                 guard let title = record.title else { return nil }
-                return ProjectInfo(
-                    id: record.uuid,
-                    title: title,
-                    areaName: record.areaTitle
-                )
+                return ProjectInfo(id: record.uuid, title: title, areaName: record.areaTitle)
             }
 
             self.tags = tagRecords.compactMap { record in
                 guard let title = record.title else { return nil }
-                return TagInfo(
-                    id: record.uuid,
-                    title: title,
-                    shortcut: record.shortcut
-                )
+                return TagInfo(id: record.uuid, title: title, shortcut: record.shortcut)
             }
 
             self.error = nil
         } catch {
             self.error = error
+            logger.error("Failed to refresh Things 3 data: \(error)")
         }
     }
 
     // MARK: - File system monitoring
 
-    /// Watches the SQLite WAL file for changes. When Things 3 writes to its
-    /// database, the WAL file is modified. DispatchSource (kqueue) gives us
-    /// near-instant notification with zero CPU cost when idle.
     private func startFileMonitor(dbPath: String) {
         let walPath = dbPath + "-wal"
         fileMonitor = Things3FileMonitor(path: walPath) { [weak self] in
@@ -102,10 +92,11 @@ final class Things3Provider: TaskProvider {
             }
         }
         fileMonitor?.start()
+        if fileMonitor?.isActive != true {
+            logger.warning("WAL file monitor failed to start for \(walPath)")
+        }
     }
 
-    /// Safety net: poll every 30s in case the WAL file monitor misses an event
-    /// (e.g., WAL checkpoint replaces the file handle).
     private func startFallbackTimer() {
         fallbackTimer = Timer.scheduledTimer(withTimeInterval: 30.0, repeats: true) { [weak self] _ in
             Task { @MainActor [weak self] in
@@ -117,18 +108,17 @@ final class Things3Provider: TaskProvider {
 
 // MARK: - File Monitor
 
-/// Monitors a file for write events using GCD dispatch sources (kqueue).
 final class Things3FileMonitor: @unchecked Sendable {
     private let path: String
     private let onChange: @Sendable () -> Void
     private var source: DispatchSourceFileSystemObject?
     private var fileDescriptor: Int32 = -1
     private let queue = DispatchQueue(label: "com.timebox.filemonitor", qos: .utility)
-
-    /// Debounce: Things 3 may write multiple WAL entries in quick succession.
-    /// Wait 0.5s after the last write before refreshing.
     private var debounceWorkItem: DispatchWorkItem?
     private let debounceInterval: TimeInterval = 0.5
+
+    /// Whether the monitor is actively watching.
+    var isActive: Bool { source != nil && fileDescriptor >= 0 }
 
     init(path: String, onChange: @escaping @Sendable () -> Void) {
         self.path = path
@@ -145,10 +135,7 @@ final class Things3FileMonitor: @unchecked Sendable {
             queue: queue
         )
 
-        source.setEventHandler { [weak self] in
-            self?.handleEvent()
-        }
-
+        source.setEventHandler { [weak self] in self?.handleEvent() }
         source.setCancelHandler { [weak self] in
             guard let self, self.fileDescriptor >= 0 else { return }
             close(self.fileDescriptor)
@@ -167,25 +154,17 @@ final class Things3FileMonitor: @unchecked Sendable {
 
     private func handleEvent() {
         debounceWorkItem?.cancel()
-        let work = DispatchWorkItem { [weak self] in
-            self?.onChange()
-        }
+        let work = DispatchWorkItem { [weak self] in self?.onChange() }
         debounceWorkItem = work
         queue.asyncAfter(deadline: .now() + debounceInterval, execute: work)
 
-        // If the WAL file was deleted/renamed (e.g., checkpoint), re-watch it
         if let source, source.data.contains(.delete) || source.data.contains(.rename) {
             stop()
-            // Brief delay then try to re-establish the watch
-            queue.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-                self?.start()
-            }
+            queue.asyncAfter(deadline: .now() + 1.0) { [weak self] in self?.start() }
         }
     }
 
-    deinit {
-        stop()
-    }
+    deinit { stop() }
 }
 
 // MARK: - Record to Domain Model Conversion

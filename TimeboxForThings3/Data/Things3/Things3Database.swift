@@ -27,10 +27,18 @@ final class Things3Database {
 
         let contents = try FileManager.default.contentsOfDirectory(
             at: groupContainer,
-            includingPropertiesForKeys: nil
+            includingPropertiesForKeys: [.contentModificationDateKey]
         )
 
-        guard let thingsDataDir = contents.first(where: { $0.lastPathComponent.hasPrefix("ThingsData-") }) else {
+        let thingsDataDirs = contents
+            .filter { $0.lastPathComponent.hasPrefix("ThingsData-") }
+            .sorted { a, b in
+                let aDate = (try? a.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
+                let bDate = (try? b.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
+                return aDate > bDate
+            }
+
+        guard let thingsDataDir = thingsDataDirs.first else {
             throw Things3Error.databaseNotFound(
                 "No ThingsData-* directory found in \(groupContainer.path)"
             )

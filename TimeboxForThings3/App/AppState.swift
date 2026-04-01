@@ -22,6 +22,9 @@ final class AppState {
     var needsOnboarding = false
     var error: Error?
 
+    private var dayChangeObserver: Any?
+    private var calendarObserver: Any?
+
     /// Task UUIDs that are currently scheduled on the RHS
     var scheduledTaskUUIDs: Set<String> {
         guard let store = scheduleStore else { return [] }
@@ -126,7 +129,8 @@ final class AppState {
 
     /// Listens for NSCalendarDayChanged notification from the system.
     private func observeDayChange() {
-        NotificationCenter.default.addObserver(
+        if let old = dayChangeObserver { NotificationCenter.default.removeObserver(old) }
+        dayChangeObserver = NotificationCenter.default.addObserver(
             forName: .NSCalendarDayChanged,
             object: nil,
             queue: .main
@@ -179,8 +183,8 @@ final class AppState {
         await calendarProvider.requestAccess()
         if calendarProvider.accessGranted {
             calendarProvider.fetchEvents(for: selectedDate)
-            // Re-fetch when calendar changes
-            NotificationCenter.default.addObserver(
+            if let old = calendarObserver { NotificationCenter.default.removeObserver(old) }
+            calendarObserver = NotificationCenter.default.addObserver(
                 forName: .EKEventStoreChanged,
                 object: nil,
                 queue: .main

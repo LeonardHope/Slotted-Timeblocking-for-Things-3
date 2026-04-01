@@ -155,20 +155,13 @@ final class ScheduleStore {
     /// Remove all blocks for a given date.
     func clearBlocks(for date: Date) throws {
         let dateString = Self.isoDateString(from: date)
-        // Query the DB for the actual IDs being deleted (not the in-memory arrays)
-        let tbIDs = try dbPool.read { db in
-            try TimeBlock.filter(Column("date") == dateString).fetchAll(db).map(\.id)
+        let (tbIDs, sbIDs) = try dbPool.write { db -> ([String], [String]) in
+            let tbIDs = try TimeBlock.filter(Column("date") == dateString).fetchAll(db).map(\.id)
+            let sbIDs = try StandaloneBlock.filter(Column("date") == dateString).fetchAll(db).map(\.id)
+            _ = try TimeBlock.filter(Column("date") == dateString).deleteAll(db)
+            _ = try StandaloneBlock.filter(Column("date") == dateString).deleteAll(db)
+            return (tbIDs, sbIDs)
         }
-        let sbIDs = try dbPool.read { db in
-            try StandaloneBlock.filter(Column("date") == dateString).fetchAll(db).map(\.id)
-        }
-        _ = try dbPool.write { db in
-            try TimeBlock.filter(Column("date") == dateString).deleteAll(db)
-        }
-        _ = try dbPool.write { db in
-            try StandaloneBlock.filter(Column("date") == dateString).deleteAll(db)
-        }
-        // Only remove from in-memory arrays if they match the cleared date
         if dateString == currentDateString {
             timeBlocks.removeAll()
             standaloneBlocks.removeAll()
@@ -190,23 +183,30 @@ final class ScheduleStore {
             try StandaloneBlock.filter(Column("date") == sourceDateString).fetchAll(db)
         }
 
-        for var block in sourceTimeBlocks {
-            block.id = UUID().uuidString
-            block.date = targetDateString
-            block.createdAt = now
-            block.updatedAt = now
-            try dbPool.write { db in try block.insert(db) }
-            notifySaved(block)
+        var newTimeBlocks: [TimeBlock] = []
+        var newStandaloneBlocks: [StandaloneBlock] = []
+
+        try dbPool.write { db in
+            for var block in sourceTimeBlocks {
+                block.id = UUID().uuidString
+                block.date = targetDateString
+                block.createdAt = now
+                block.updatedAt = now
+                try block.insert(db)
+                newTimeBlocks.append(block)
+            }
+            for var block in sourceStandaloneBlocks {
+                block.id = UUID().uuidString
+                block.date = targetDateString
+                block.createdAt = now
+                block.updatedAt = now
+                try block.insert(db)
+                newStandaloneBlocks.append(block)
+            }
         }
 
-        for var block in sourceStandaloneBlocks {
-            block.id = UUID().uuidString
-            block.date = targetDateString
-            block.createdAt = now
-            block.updatedAt = now
-            try dbPool.write { db in try block.insert(db) }
-            notifySaved(block)
-        }
+        for block in newTimeBlocks { notifySaved(block) }
+        for block in newStandaloneBlocks { notifySaved(block) }
     }
 
     // MARK: - Upsert (for sync engine applying remote changes)
@@ -282,11 +282,15 @@ final class ScheduleStore {
 
     // MARK: - Helpers
 
+    private static let isoFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd"
+        f.locale = Locale(identifier: "en_US_POSIX")
+        return f
+    }()
+
     static func isoDateString(from date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        return formatter.string(from: date)
+        isoFormatter.string(from: date)
     }
 
     private static func databaseURL() throws -> URL {
