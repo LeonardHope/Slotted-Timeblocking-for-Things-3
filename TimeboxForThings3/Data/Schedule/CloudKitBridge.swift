@@ -35,10 +35,10 @@ enum CloudKitBridge {
         guard record.recordType == "TimeBlock",
               let taskUUID = record["taskUUID"] as? String,
               let date = record["date"] as? String,
-              let startTime = record["startTime"] as? Int,
-              let duration = record["duration"] as? Int,
-              let createdAt = record["createdAt"] as? Double,
-              let updatedAt = record["updatedAt"] as? Double
+              let startTime = (record["startTime"] as? NSNumber)?.intValue,
+              let duration = (record["duration"] as? NSNumber)?.intValue,
+              let createdAt = (record["createdAt"] as? NSNumber)?.doubleValue,
+              let updatedAt = (record["updatedAt"] as? NSNumber)?.doubleValue
         else { return nil }
 
         return TimeBlock(
@@ -47,7 +47,7 @@ enum CloudKitBridge {
             date: date,
             startTime: startTime,
             duration: duration,
-            colorIndex: record["colorIndex"] as? Int,
+            colorIndex: (record["colorIndex"] as? NSNumber)?.intValue,
             createdAt: createdAt,
             updatedAt: updatedAt
         )
@@ -86,11 +86,11 @@ enum CloudKitBridge {
         guard record.recordType == "StandaloneBlock",
               let title = record["title"] as? String,
               let date = record["date"] as? String,
-              let startTime = record["startTime"] as? Int,
-              let duration = record["duration"] as? Int,
-              let colorIndex = record["colorIndex"] as? Int,
-              let createdAt = record["createdAt"] as? Double,
-              let updatedAt = record["updatedAt"] as? Double
+              let startTime = (record["startTime"] as? NSNumber)?.intValue,
+              let duration = (record["duration"] as? NSNumber)?.intValue,
+              let colorIndex = (record["colorIndex"] as? NSNumber)?.intValue,
+              let createdAt = (record["createdAt"] as? NSNumber)?.doubleValue,
+              let updatedAt = (record["updatedAt"] as? NSNumber)?.doubleValue
         else { return nil }
 
         return StandaloneBlock(
