@@ -83,6 +83,7 @@ final class ScheduleStore {
         }
         if let index = timeBlocks.firstIndex(where: { $0.id == block.id }) {
             timeBlocks[index] = updated
+            timeBlocks.sort { $0.startTime < $1.startTime }
         }
         notifySaved(updated)
     }
@@ -136,6 +137,7 @@ final class ScheduleStore {
         }
         if let index = standaloneBlocks.firstIndex(where: { $0.id == block.id }) {
             standaloneBlocks[index] = updated
+            standaloneBlocks.sort { $0.startTime < $1.startTime }
         }
         notifySaved(updated)
     }
@@ -153,14 +155,24 @@ final class ScheduleStore {
     /// Remove all blocks for a given date.
     func clearBlocks(for date: Date) throws {
         let dateString = Self.isoDateString(from: date)
-        let tbIDs = timeBlocks.map(\.id)
-        let sbIDs = standaloneBlocks.map(\.id)
-        try dbPool.write { db in
+        // Query the DB for the actual IDs being deleted (not the in-memory arrays)
+        let tbIDs = try dbPool.read { db in
+            try TimeBlock.filter(Column("date") == dateString).fetchAll(db).map(\.id)
+        }
+        let sbIDs = try dbPool.read { db in
+            try StandaloneBlock.filter(Column("date") == dateString).fetchAll(db).map(\.id)
+        }
+        _ = try dbPool.write { db in
             try TimeBlock.filter(Column("date") == dateString).deleteAll(db)
+        }
+        _ = try dbPool.write { db in
             try StandaloneBlock.filter(Column("date") == dateString).deleteAll(db)
         }
-        timeBlocks.removeAll()
-        standaloneBlocks.removeAll()
+        // Only remove from in-memory arrays if they match the cleared date
+        if dateString == currentDateString {
+            timeBlocks.removeAll()
+            standaloneBlocks.removeAll()
+        }
         for id in tbIDs { notifyDeleted(id, "TimeBlock") }
         for id in sbIDs { notifyDeleted(id, "StandaloneBlock") }
     }
@@ -237,6 +249,19 @@ final class ScheduleStore {
     func allStandaloneBlocks() throws -> [StandaloneBlock] {
         try dbPool.read { db in
             try StandaloneBlock.fetchAll(db)
+        }
+    }
+
+    /// Look up a single time block by ID from the database (not just in-memory).
+    func fetchTimeBlock(id: String) throws -> TimeBlock? {
+        try dbPool.read { db in
+            try TimeBlock.fetchOne(db, key: id)
+        }
+    }
+
+    func fetchStandaloneBlock(id: String) throws -> StandaloneBlock? {
+        try dbPool.read { db in
+            try StandaloneBlock.fetchOne(db, key: id)
         }
     }
 
