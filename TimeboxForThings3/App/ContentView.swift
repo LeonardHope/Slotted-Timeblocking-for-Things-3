@@ -15,17 +15,11 @@ struct ContentView: View {
                 NavigationSplitView {
                     TaskListView()
                         .navigationTitle("")
+                        .toolbar(.hidden, for: .windowToolbar)
                 } detail: {
                     ScheduleGridView()
                         .navigationTitle("")
                 }
-                .toolbar {
-                    ToolbarItem(placement: .principal) {
-                        SummaryBarView()
-                            .frame(maxWidth: .infinity)
-                    }
-                }
-                .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
                 .focusable()
                 .focusEffectDisabled()
                 .onKeyPress(.upArrow) {
