@@ -60,10 +60,6 @@ struct StandaloneBlockView: View {
             )
             .overlay(alignment: .leading) {
                 HStack(spacing: 6) {
-                    Button(action: onColorCycle) {
-                        Circle().fill(blockColor).frame(width: 8, height: 8)
-                    }.buttonStyle(.plain)
-
                     if isEditing {
                         TextField("Title", text: $editTitle)
                             .textFieldStyle(.plain)
@@ -89,9 +85,21 @@ struct StandaloneBlockView: View {
             }
             .overlay(alignment: .trailing) {
                 if isHovering && dragMode == .none {
-                    Button(action: onDelete) {
-                        Image(systemName: "xmark.circle.fill").font(.system(size: 12)).foregroundStyle(Theme.textTertiary)
-                    }.buttonStyle(.plain).padding(.trailing, 4)
+                    HStack(spacing: 4) {
+                        Button(action: onColorCycle) {
+                            Circle()
+                                .fill(blockColor)
+                                .frame(width: 10, height: 10)
+                        }
+                        .buttonStyle(.plain)
+                        Button(action: onDelete) {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.system(size: 12))
+                                .foregroundStyle(Theme.textTertiary)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(.trailing, 4)
                 }
             }
             .overlay {
