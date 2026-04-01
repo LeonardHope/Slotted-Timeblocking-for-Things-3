@@ -14,8 +14,10 @@ struct ContentView: View {
             } else {
                 NavigationSplitView {
                     TaskListView()
+                        .navigationTitle("")
                 } detail: {
                     ScheduleGridView()
+                        .navigationTitle("")
                 }
                 .focusable()
                 .focusEffectDisabled()
