@@ -9,11 +9,6 @@ struct ScheduleGridView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Summary bar
-            SummaryBarView()
-
-            Divider()
-
             // Time grid — fills all available vertical space
             GeometryReader { geo in
                 ScrollViewReader { proxy in

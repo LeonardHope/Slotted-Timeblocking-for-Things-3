@@ -19,6 +19,13 @@ struct ContentView: View {
                     ScheduleGridView()
                         .navigationTitle("")
                 }
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        SummaryBarView()
+                            .frame(maxWidth: .infinity)
+                    }
+                }
+                .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
                 .focusable()
                 .focusEffectDisabled()
                 .onKeyPress(.upArrow) {
