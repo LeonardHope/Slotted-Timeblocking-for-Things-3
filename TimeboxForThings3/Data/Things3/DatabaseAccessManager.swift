@@ -2,10 +2,11 @@ import AppKit
 import UniformTypeIdentifiers
 
 /// Manages access to the Things 3 database, handling sandbox restrictions
-/// via security-scoped bookmarks.
+/// via security-scoped bookmarks on the containing directory.
 @MainActor
 final class DatabaseAccessManager {
-    private static let bookmarkKey = "things3DatabaseBookmark"
+    private static let bookmarkKey = "things3DatabaseDirBookmark"
+    private var accessingURL: URL?
 
     /// Attempt to find or restore access to the Things 3 database.
     /// Returns the path if accessible, nil if user action is needed.
@@ -23,14 +24,13 @@ final class DatabaseAccessManager {
         return nil
     }
 
-    /// Present an open panel for the user to grant access to the Things 3 database.
-    /// Returns the path if the user selected a valid database.
+    /// Present an open panel for the user to grant access to the Things 3 database directory.
     func requestUserAccess() -> String? {
         let panel = NSOpenPanel()
         panel.title = "Select Your Things 3 Database"
-        panel.message = "Navigate to the Things 3 database folder and select \"main.sqlite\".\n\nTypical location: ~/Library/Group Containers/JLMPQHK86H.com.culturedcode.ThingsMac/"
+        panel.message = "Navigate to the Things 3 database and select the \"main.sqlite\" file."
         panel.prompt = "Grant Access"
-        panel.allowedContentTypes = [.data]  // Allow all files — we validate after selection
+        panel.allowedContentTypes = [.data]
         panel.allowsMultipleSelection = false
         panel.canChooseDirectories = false
         panel.canChooseFiles = true
@@ -41,29 +41,33 @@ final class DatabaseAccessManager {
         let validator = OpenPanelValidator()
         panel.delegate = validator
 
-        guard panel.runModal() == .OK, let url = panel.url else {
+        guard panel.runModal() == .OK, let fileURL = panel.url else {
             return nil
         }
 
-        // Save a security-scoped bookmark for future access
-        saveBookmark(for: url)
+        guard fileURL.lastPathComponent == "main.sqlite" else {
+            return nil
+        }
 
-        return url.path
+        // Bookmark the parent directory (grants access to WAL/SHM files too)
+        let dirURL = fileURL.deletingLastPathComponent()
+        saveBookmark(for: dirURL)
+
+        return fileURL.path
     }
 
     // MARK: - Bookmark persistence
 
-    private func saveBookmark(for url: URL) {
+    private func saveBookmark(for dirURL: URL) {
         do {
-            let bookmark = try url.bookmarkData(
+            let bookmark = try dirURL.bookmarkData(
                 options: [.withSecurityScope, .securityScopeAllowOnlyReadAccess],
                 includingResourceValuesForKeys: nil,
                 relativeTo: nil
             )
             UserDefaults.standard.set(bookmark, forKey: Self.bookmarkKey)
         } catch {
-            // Bookmark creation failed — access will work for this session
-            // but user will need to re-grant on next launch
+            // Bookmark creation failed
         }
     }
 
@@ -74,36 +78,41 @@ final class DatabaseAccessManager {
 
         do {
             var isStale = false
-            let url = try URL(
+            let dirURL = try URL(
                 resolvingBookmarkData: data,
                 options: .withSecurityScope,
                 relativeTo: nil,
                 bookmarkDataIsStale: &isStale
             )
 
-            guard url.startAccessingSecurityScopedResource() else {
+            guard dirURL.startAccessingSecurityScopedResource() else {
                 return nil
             }
+            accessingURL = dirURL
 
-            // If the bookmark is stale, re-save it
             if isStale {
-                saveBookmark(for: url)
+                saveBookmark(for: dirURL)
             }
 
-            // Verify the file still exists
-            guard FileManager.default.fileExists(atPath: url.path) else {
-                url.stopAccessingSecurityScopedResource()
+            let dbPath = dirURL.appendingPathComponent("main.sqlite").path
+            guard FileManager.default.fileExists(atPath: dbPath) else {
+                dirURL.stopAccessingSecurityScopedResource()
+                accessingURL = nil
                 return nil
             }
 
-            return url.path
+            return dbPath
         } catch {
             return nil
         }
     }
 
-    /// Clear the saved bookmark (e.g., if the database moved).
+    /// Clear the saved bookmark.
     func clearBookmark() {
+        if let url = accessingURL {
+            url.stopAccessingSecurityScopedResource()
+            accessingURL = nil
+        }
         UserDefaults.standard.removeObject(forKey: Self.bookmarkKey)
     }
 
@@ -114,17 +123,13 @@ final class DatabaseAccessManager {
         let groupContainer = home.appendingPathComponent(
             "Library/Group Containers/JLMPQHK86H.com.culturedcode.ThingsMac"
         )
-        // Try to open directly at the database folder
         if let contents = try? FileManager.default.contentsOfDirectory(at: groupContainer, includingPropertiesForKeys: nil),
            let thingsDataDir = contents.first(where: { $0.lastPathComponent.hasPrefix("ThingsData-") }) {
-            return thingsDataDir
-                .appendingPathComponent("Things Database.thingsdatabase")
+            return thingsDataDir.appendingPathComponent("Things Database.thingsdatabase")
         }
-        // Fall back to the group container
         if FileManager.default.fileExists(atPath: groupContainer.path) {
             return groupContainer
         }
-        // Fall back to Group Containers (sandbox may block above)
         let groupContainers = home.appendingPathComponent("Library/Group Containers")
         if FileManager.default.fileExists(atPath: groupContainers.path) {
             return groupContainers
@@ -133,15 +138,13 @@ final class DatabaseAccessManager {
     }
 }
 
-/// Validates that the selected file is main.sqlite before enabling Grant Access.
+/// Only enable Grant Access for main.sqlite files.
 private class OpenPanelValidator: NSObject, NSOpenSavePanelDelegate {
     func panel(_ sender: Any, shouldEnable url: URL) -> Bool {
-        // Enable directories for navigation
         var isDir: ObjCBool = false
         if FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir), isDir.boolValue {
             return true
         }
-        // Only enable main.sqlite files
         return url.lastPathComponent == "main.sqlite"
     }
 }
