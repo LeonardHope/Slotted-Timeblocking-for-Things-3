@@ -24,11 +24,15 @@ struct ScheduleGridView: View {
                             // Background grid lines
                             gridLines
 
+                            // Calendar events (behind everything, like shaded time slots)
+                            calendarLayer
+                                .padding(.top, topPadding)
+
                             // Drop zone (invisible, handles drops and double-clicks)
                             dropZone
                                 .padding(.top, topPadding)
 
-                            // Scheduled blocks
+                            // Scheduled blocks (on top of calendar events)
                             blocksLayer
                                 .padding(.top, topPadding)
 
@@ -115,6 +119,21 @@ struct ScheduleGridView: View {
         return max(minMinutes, min(start, maxMinutes - duration))
     }
 
+    // MARK: - Calendar events layer
+
+    private var calendarLayer: some View {
+        ZStack(alignment: .topLeading) {
+            ForEach(appState.calendarProvider.events.filter { !$0.isAllDay }) { event in
+                CalendarEventView(event: event)
+                    .offset(
+                        x: Theme.timeLabelWidth + 4,
+                        y: yPosition(for: event.startMinutes)
+                    )
+                    .padding(.trailing, Theme.timeLabelWidth + 12)
+            }
+        }
+    }
+
     // MARK: - Blocks layer
 
     private var blocksLayer: some View {
@@ -189,6 +208,7 @@ struct ScheduleGridView: View {
                     )
                     .padding(.trailing, Theme.timeLabelWidth + 12)
                 }
+
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

@@ -49,6 +49,7 @@ struct SettingsView: View {
 
             Section("Schedule") {
                 Toggle("Clear schedule at midnight", isOn: $state.clearAtMidnight)
+                Toggle("Show calendar events", isOn: $state.showCalendarEvents)
             }
 
             Section("Sync") {
