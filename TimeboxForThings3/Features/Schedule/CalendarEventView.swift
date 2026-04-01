@@ -8,7 +8,7 @@ struct CalendarEventView: View {
     private var ppm: CGFloat { Theme.pointsPerMinute }
     private var blockHeight: CGFloat { CGFloat(event.duration) * ppm }
     private var radius: CGFloat { min(8, blockHeight / 6) }
-    private var color: Color { Color(cgColor: event.calendarColor) }
+    private var color: Color { .gray }
 
     var body: some View {
         ZStack(alignment: .leading) {
@@ -35,14 +35,29 @@ struct CalendarEventView: View {
             }
 
             // Content
-            VStack(alignment: .leading, spacing: 1) {
-                Text(event.title)
-                    .font(.system(size: 11 * textScale, weight: .medium))
-                    .foregroundStyle(Theme.textSecondary)
-                    .lineLimit(event.duration <= 30 ? 1 : 2)
-                Text(timeRange)
-                    .font(.system(size: 9 * textScale))
-                    .foregroundStyle(Theme.textTertiary)
+            Group {
+                if event.duration <= 30 {
+                    HStack(spacing: 6) {
+                        Text(event.title)
+                            .font(.system(size: 11 * textScale, weight: .medium))
+                            .foregroundStyle(Theme.textSecondary)
+                            .lineLimit(1)
+                        Text(timeRange)
+                            .font(.system(size: 9 * textScale))
+                            .foregroundStyle(Theme.textTertiary)
+                            .lineLimit(1)
+                    }
+                } else {
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(event.title)
+                            .font(.system(size: 11 * textScale, weight: .medium))
+                            .foregroundStyle(Theme.textSecondary)
+                            .lineLimit(2)
+                        Text(timeRange)
+                            .font(.system(size: 9 * textScale))
+                            .foregroundStyle(Theme.textTertiary)
+                    }
+                }
             }
             .padding(.leading, 10)
             .padding(.trailing, 6)
