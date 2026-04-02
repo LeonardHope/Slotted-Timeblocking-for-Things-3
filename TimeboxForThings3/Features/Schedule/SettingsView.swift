@@ -50,6 +50,7 @@ struct SettingsView: View {
             }
 
             Section("Schedule") {
+                Toggle("Show current time line", isOn: $state.showCurrentTimeLine)
                 Toggle("Clear schedule at midnight", isOn: $state.clearAtMidnight)
                 Toggle("Show calendar events", isOn: $state.showCalendarEvents)
             }

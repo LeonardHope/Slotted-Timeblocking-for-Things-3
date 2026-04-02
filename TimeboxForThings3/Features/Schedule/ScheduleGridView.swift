@@ -33,9 +33,11 @@ struct ScheduleGridView: View {
                                 .padding(.top, topPadding)
 
                             // Now line
-                            NowLineView(startHour: appState.startHour)
-                                .padding(.top, topPadding)
-                                .id("nowLine")
+                            if appState.showCurrentTimeLine {
+                                NowLineView(startHour: appState.startHour)
+                                    .padding(.top, topPadding)
+                                    .id("nowLine")
+                            }
                         }
                         .frame(width: geo.size.width, height: max(gridHeight + topPadding + bottomPadding, geo.size.height))
                     }
