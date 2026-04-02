@@ -10,20 +10,20 @@ struct NowLineView: View {
     var body: some View {
         let position = yPositionForNow
         if let position {
-            ZStack(alignment: .leading) {
-                // The line — positioned exactly at the computed y
+            // Small red dot on the left edge + line across the grid
+            HStack(spacing: 0) {
+                Spacer()
+                    .frame(width: Theme.timeLabelWidth - 4)
+
+                Circle()
+                    .fill(Theme.nowLineRed)
+                    .frame(width: 8, height: 8)
+
                 Rectangle()
                     .fill(Theme.nowLineRed)
                     .frame(height: 1.5)
-                    .padding(.leading, Theme.timeLabelWidth)
-
-                // Time label — centered vertically on the line
-                Text(timeString)
-                    .font(.system(size: 10, weight: .semibold))
-                    .foregroundStyle(Theme.nowLineRed)
-                    .frame(width: Theme.timeLabelWidth - 8, alignment: .trailing)
             }
-            .frame(height: 0) // zero height so offset is exact
+            .frame(height: 0)
             .offset(y: position)
             .onReceive(timer) { _ in
                 now = Date()
@@ -40,11 +40,5 @@ struct NowLineView: View {
 
         guard currentMinutes >= startMinutes else { return nil }
         return CGFloat(currentMinutes - startMinutes) * Theme.pointsPerMinute
-    }
-
-    private var timeString: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "h:mm"
-        return formatter.string(from: now)
     }
 }
