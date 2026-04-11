@@ -127,7 +127,7 @@ final class AppState {
         }
 
         do {
-            scheduleStore = try ScheduleStore()
+            scheduleStore = try ScheduleStore(demoMode: MockTaskProvider.isEnabled)
             try await scheduleStore?.loadBlocks(for: selectedDate)
             if MockTaskProvider.isEnabled {
                 seedDemoSchedule()
@@ -180,7 +180,7 @@ final class AppState {
             needsOnboarding = false
 
             do {
-                scheduleStore = try ScheduleStore()
+                scheduleStore = try ScheduleStore(demoMode: false)
                 try await scheduleStore?.loadBlocks(for: selectedDate)
             } catch {
                 self.error = error

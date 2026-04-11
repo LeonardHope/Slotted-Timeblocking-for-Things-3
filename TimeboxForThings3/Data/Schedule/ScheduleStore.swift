@@ -20,8 +20,8 @@ final class ScheduleStore {
     /// Called when a local write happens, so the sync engine can push changes.
     var onSyncChange: ((SyncChange) -> Void)?
 
-    init() throws {
-        let url = try Self.databaseURL()
+    init(demoMode: Bool = false) throws {
+        let url = try Self.databaseURL(demoMode: demoMode)
         dbPool = try DatabasePool(path: url.path)
         try ScheduleMigrations.migrator.migrate(dbPool)
     }
@@ -293,7 +293,7 @@ final class ScheduleStore {
         isoFormatter.string(from: date)
     }
 
-    private static func databaseURL() throws -> URL {
+    private static func databaseURL(demoMode: Bool = false) throws -> URL {
         let appSupport = try FileManager.default.url(
             for: .applicationSupportDirectory,
             in: .userDomainMask,
@@ -302,6 +302,7 @@ final class ScheduleStore {
         )
         let dir = appSupport.appendingPathComponent("TimeboxForThings3", isDirectory: true)
         try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        return dir.appendingPathComponent("schedule.sqlite")
+        let filename = demoMode ? "schedule-demo.sqlite" : "schedule.sqlite"
+        return dir.appendingPathComponent(filename)
     }
 }
