@@ -36,6 +36,7 @@
 		B4021D92935C4632D0D07B09 /* TaskCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79EB5537F38518438A416185 /* TaskCategory.swift */; };
 		BBCB6FF66031CF4C6C157504 /* ScheduleMigrations.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C72B7DFA2B59EC5D2946A2 /* ScheduleMigrations.swift */; };
 		C1FE1891136D00AA71796776 /* PreviewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38604FB91226D9A03FA0C37 /* PreviewData.swift */; };
+		C5EAD975AAE69612DCDEF249 /* MockTaskProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B3EEB30F6C587D1E3E496A8 /* MockTaskProvider.swift */; };
 		C871EBF5B5B254A381531ABD /* Things3DateDecoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B90FED346A412DC56B39F39 /* Things3DateDecoderTests.swift */; };
 		C98ADB29740ABB63EB2FAD32 /* Things3DateDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BF51A5A4DB479BC0B917CC /* Things3DateDecoder.swift */; };
 		CC9DF3513C712FB2B0A63166 /* Things3Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06390938CC9AE3DBC4BFC50C /* Things3Models.swift */; };
@@ -60,7 +61,7 @@
 
 /* Begin PBXFileReference section */
 		06390938CC9AE3DBC4BFC50C /* Things3Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Things3Models.swift; sourceTree = "<group>"; };
-		074C23CA94E7851336EDDFEE /* Slotted.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Slotted.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		074C23CA94E7851336EDDFEE /* TimeboxForThings3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TimeboxForThings3.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1380041A7F0B046E373D7EC4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		22B3B96EF5B317240E4DACB0 /* StandaloneBlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandaloneBlockView.swift; sourceTree = "<group>"; };
 		3F413CD1EEA1BA3609FF86F9 /* TaskBlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskBlockView.swift; sourceTree = "<group>"; };
@@ -74,6 +75,7 @@
 		6F441E2638A8679A2E52D2F0 /* CloudKitBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitBridge.swift; sourceTree = "<group>"; };
 		79EB5537F38518438A416185 /* TaskCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCategory.swift; sourceTree = "<group>"; };
 		7ABD73A7A737C1C1465974F3 /* TimeboxForThings3Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TimeboxForThings3Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7B3EEB30F6C587D1E3E496A8 /* MockTaskProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTaskProvider.swift; sourceTree = "<group>"; };
 		94A2A252A790007DE552CC35 /* ProjectInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectInfo.swift; sourceTree = "<group>"; };
 		9B8070ED18AFFD23E729C3C3 /* DropTargetGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropTargetGrid.swift; sourceTree = "<group>"; };
 		A5026BA20AFA7BF9793186B4 /* SummaryBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryBarView.swift; sourceTree = "<group>"; };
@@ -210,6 +212,7 @@
 		80353BDA3EC0E8214DC83C45 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				7B3EEB30F6C587D1E3E496A8 /* MockTaskProvider.swift */,
 				DC0AA55E3BFB7761B28F44EA /* TaskProvider.swift */,
 				E68B4D9A336E3FB178A480EC /* Calendar */,
 				EB0F44A02B20FFD1A4C391B1 /* Models */,
@@ -236,7 +239,7 @@
 		BBBCE1ECDD16FC59CF4F88B3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				074C23CA94E7851336EDDFEE /* Slotted.app */,
+				074C23CA94E7851336EDDFEE /* TimeboxForThings3.app */,
 				7ABD73A7A737C1C1465974F3 /* TimeboxForThings3Tests.xctest */,
 			);
 			name = Products;
@@ -337,7 +340,7 @@
 				709DDCE354B9C84A5AA3F955 /* GRDB */,
 			);
 			productName = TimeboxForThings3;
-			productReference = 074C23CA94E7851336EDDFEE /* Slotted.app */;
+			productReference = 074C23CA94E7851336EDDFEE /* TimeboxForThings3.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -347,7 +350,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 2640;
+				LastUpgradeCheck = 1630;
 				TargetAttributes = {
 					D6CD3B7C383D9D6DCE524CBC = {
 						DevelopmentTeam = 5YJPT693C8;
@@ -411,6 +414,7 @@
 				FBCEF5C0AF478B14199DAD11 /* DatabaseAccessManager.swift in Sources */,
 				33B7DF425CDD0100502869BA /* DragDropCoordinator.swift in Sources */,
 				078E75ABE33F2452303D6D37 /* DropTargetGrid.swift in Sources */,
+				C5EAD975AAE69612DCDEF249 /* MockTaskProvider.swift in Sources */,
 				D40CA37F9DB51C10C59B1E78 /* NowLineView.swift in Sources */,
 				087073101A3E26D7C2754028 /* OnboardingView.swift in Sources */,
 				C1FE1891136D00AA71796776 /* PreviewData.swift in Sources */,
@@ -461,10 +465,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 5YJPT693C8;
 				ENABLE_APP_SANDBOX = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TimeboxForThings3/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Slotted;
@@ -517,11 +519,9 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -535,7 +535,6 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -547,7 +546,6 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -595,11 +593,9 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -620,7 +616,6 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -632,7 +627,6 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -655,10 +649,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 5YJPT693C8;
 				ENABLE_APP_SANDBOX = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TimeboxForThings3/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Slotted;

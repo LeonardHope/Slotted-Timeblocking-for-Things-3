@@ -13,7 +13,7 @@ enum AppearanceMode: Int, CaseIterable, Hashable {
 @Observable
 @MainActor
 final class AppState {
-    var taskProvider: Things3Provider
+    var taskProvider: any TaskProvider
     var scheduleStore: ScheduleStore?
     var calendarProvider = CalendarProvider()
     var databaseAccessManager = DatabaseAccessManager()
@@ -87,7 +87,11 @@ final class AppState {
     private(set) var syncEngine: ScheduleSyncEngine?
 
     init() {
-        self.taskProvider = Things3Provider()
+        if MockTaskProvider.isEnabled {
+            self.taskProvider = MockTaskProvider()
+        } else {
+            self.taskProvider = Things3Provider()
+        }
 
         let defaults = UserDefaults.standard
         defaults.register(defaults: ["startHour": 9, "endHour": 17, "appearanceMode": 0, "textScale": 1.0, "hideEmptyCategories": true, "hideEmptyProjects": true, "showCurrentTimeLine": true, "showDates": true, "clearAtMidnight": true, "hideScheduledTasks": true, "iCloudSyncEnabled": false, "showCalendarEvents": false])
@@ -108,18 +112,26 @@ final class AppState {
     }
 
     func initialize() async {
-        // Try to find the Things 3 database
-        if let path = databaseAccessManager.resolveAccess() {
-            taskProvider.setDatabasePath(path)
-            await taskProvider.startObserving()
+        // Demo mode: skip Things 3 database access entirely
+        if let things3 = taskProvider as? Things3Provider {
+            if let path = databaseAccessManager.resolveAccess() {
+                things3.setDatabasePath(path)
+                await taskProvider.startObserving()
+            } else {
+                needsOnboarding = true
+                return
+            }
         } else {
-            needsOnboarding = true
-            return
+            // Mock provider — no database needed
+            await taskProvider.startObserving()
         }
 
         do {
             scheduleStore = try ScheduleStore()
             try await scheduleStore?.loadBlocks(for: selectedDate)
+            if MockTaskProvider.isEnabled {
+                seedDemoSchedule()
+            }
         } catch {
             self.error = error
         }
@@ -161,8 +173,9 @@ final class AppState {
 
     /// Called from the onboarding view when the user grants file access.
     func grantDatabaseAccess() async {
+        guard let things3 = taskProvider as? Things3Provider else { return }
         if let path = databaseAccessManager.requestUserAccess() {
-            taskProvider.setDatabasePath(path)
+            things3.setDatabasePath(path)
             await taskProvider.startObserving()
             needsOnboarding = false
 
@@ -185,6 +198,30 @@ final class AppState {
         try? await scheduleStore?.loadBlocks(for: date)
         if showCalendarEvents {
             calendarProvider.fetchEvents(for: date)
+        }
+    }
+
+    /// Seed today's schedule with demo standalone blocks (only if empty).
+    private func seedDemoSchedule() {
+        guard let store = scheduleStore else { return }
+        guard store.standaloneBlocks.isEmpty && store.timeBlocks.isEmpty else { return }
+
+        let date = selectedDate
+        let demos: [(title: String, start: Int, duration: Int, color: Int)] = [
+            ("Morning run",        7 * 60,         45, 2),  // 7:00am – 7:45am
+            ("Check emails",       9 * 60,         30, 0),  // 9:00am – 9:30am
+            ("Lunch",              12 * 60,        60, 5),  // 12pm – 1pm
+            ("Pick up the kids",   15 * 60,        45, 7),  // 3pm – 3:45pm
+        ]
+
+        for demo in demos {
+            _ = try? store.addStandaloneBlock(
+                title: demo.title,
+                date: date,
+                startTime: demo.start,
+                duration: demo.duration,
+                colorIndex: demo.color
+            )
         }
     }
 
