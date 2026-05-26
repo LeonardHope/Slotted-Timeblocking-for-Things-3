@@ -1,0 +1,92 @@
+import Foundation
+
+/// Mock data for SwiftUI previews.
+enum PreviewData {
+    static let tasks: [TaskItem] = [
+        TaskItem(
+            id: "preview-1",
+            title: "Prepare patent application (need India FFL)",
+            notes: "Some notes here",
+            projectName: "Newport - Disclose",
+            projectUUID: "project-1",
+            areaName: "Work",
+            headingName: nil,
+            tags: ["Important"],
+            startDate: nil,
+            deadline: Calendar.current.date(byAdding: .day, value: 3, to: .now),
+            creationDate: .now,
+            todayIndex: 0,
+            startValue: 1,
+            checklistTotal: 3,
+            checklistOpen: 1
+        ),
+        TaskItem(
+            id: "preview-2",
+            title: "File annual report with WA SOS",
+            notes: nil,
+            projectName: "Hope IP - Firm Stuff",
+            projectUUID: "project-2",
+            areaName: "Work",
+            headingName: nil,
+            tags: [],
+            startDate: nil,
+            deadline: Calendar.current.date(byAdding: .day, value: -1, to: .now),
+            creationDate: .now,
+            todayIndex: 1,
+            startValue: 1,
+            checklistTotal: 0,
+            checklistOpen: 0
+        ),
+        TaskItem(
+            id: "preview-3",
+            title: "Find NZ tax advisor",
+            notes: nil,
+            projectName: "Financial",
+            projectUUID: "project-3",
+            areaName: "Personal",
+            headingName: nil,
+            tags: ["Errand"],
+            startDate: nil,
+            deadline: nil,
+            creationDate: .now,
+            todayIndex: -1,
+            startValue: 0,
+            checklistTotal: 0,
+            checklistOpen: 0
+        ),
+        TaskItem(
+            id: "preview-4",
+            title: "Schedule eye examination",
+            notes: nil,
+            projectName: nil,
+            projectUUID: nil,
+            areaName: "Personal",
+            headingName: nil,
+            tags: [],
+            startDate: Calendar.current.date(byAdding: .day, value: 2, to: .now),
+            deadline: nil,
+            creationDate: .now,
+            todayIndex: -1,
+            startValue: 1,
+            checklistTotal: 0,
+            checklistOpen: 0
+        ),
+        TaskItem(
+            id: "preview-5",
+            title: "Research moving Hope IP to a different jurisdiction",
+            notes: "Long notes about this task",
+            projectName: "Hope IP - Firm Stuff",
+            projectUUID: "project-2",
+            areaName: "Work",
+            headingName: nil,
+            tags: [],
+            startDate: nil,
+            deadline: nil,
+            creationDate: .now,
+            todayIndex: -1,
+            startValue: 2,
+            checklistTotal: 0,
+            checklistOpen: 0
+        ),
+    ]
+}
