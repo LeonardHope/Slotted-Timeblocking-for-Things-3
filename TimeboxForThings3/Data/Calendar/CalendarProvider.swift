@@ -24,9 +24,6 @@ final class CalendarProvider {
         do {
             let granted = try await store.requestFullAccessToEvents()
             accessGranted = granted
-            if granted {
-                observeChanges()
-            }
         } catch {
             accessGranted = false
         }
@@ -71,10 +68,5 @@ final class CalendarProvider {
         }
     }
 
-    private func observeChanges() {
-        // EKEventStoreChanged is observed by AppState to trigger re-fetch
-    }
-
-    /// Whether the user has calendar events enabled and access granted.
-    var isAvailable: Bool { accessGranted }
+    // EKEventStoreChanged is observed by AppState, which triggers re-fetch.
 }

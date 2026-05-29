@@ -3,6 +3,12 @@ import SwiftUI
 /// A read-only calendar event block with diagonal hatching.
 struct CalendarEventView: View {
     let event: CalendarEvent
+    /// True (unclipped) event times for the label, used when `event` has been
+    /// clamped to the visible window for geometry. Defaults to the event's own
+    /// range, so the label reflects the real meeting times even when the block
+    /// is clipped at the top or bottom of the grid.
+    var labelStartMinutes: Int? = nil
+    var labelDurationMinutes: Int? = nil
     @Environment(\.textScale) private var textScale
 
     private var ppm: CGFloat { Theme.pointsPerMinute }
@@ -67,16 +73,9 @@ struct CalendarEventView: View {
     }
 
     private var timeRange: String {
-        let end = event.startMinutes + event.duration
-        return "\(format(event.startMinutes)) – \(format(end))"
-    }
-
-    private func format(_ totalMinutes: Int) -> String {
-        let h = totalMinutes / 60
-        let m = totalMinutes % 60
-        let period = h >= 12 ? "pm" : "am"
-        let hour12 = h == 0 ? 12 : (h > 12 ? h - 12 : h)
-        return m == 0 ? "\(hour12)\(period)" : "\(hour12):\(String(format: "%02d", m))\(period)"
+        let start = labelStartMinutes ?? event.startMinutes
+        let end = start + (labelDurationMinutes ?? event.duration)
+        return "\(format12Hour(start)) – \(format12Hour(end))"
     }
 }
 

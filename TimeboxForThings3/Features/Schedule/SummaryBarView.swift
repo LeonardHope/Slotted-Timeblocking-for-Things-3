@@ -64,10 +64,14 @@ struct SummaryBarView: View {
         .padding(.vertical, 10)
     }
 
+    private static let dateFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "EEEE, MMMM d"
+        return f
+    }()
+
     private var dateString: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "EEEE, MMMM d"
-        return formatter.string(from: appState.selectedDate)
+        Self.dateFormatter.string(from: appState.selectedDate)
     }
 
     private func computeStats() -> (taskCount: Int, plannedHours: Double, freeHours: Double) {
@@ -75,7 +79,8 @@ struct SummaryBarView: View {
             return (0, 0, Double(appState.endHour - appState.startHour))
         }
 
-        let taskCount = store.timeBlocks.count
+        // Count distinct tasks, so a task scheduled in multiple slots counts once.
+        let taskCount = Set(store.timeBlocks.map(\.taskUUID)).count
         let totalMinutes = store.timeBlocks.map(\.duration).reduce(0, +)
             + store.standaloneBlocks.map(\.duration).reduce(0, +)
         let plannedHours = Double(totalMinutes) / 60.0

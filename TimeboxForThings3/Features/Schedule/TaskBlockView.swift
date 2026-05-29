@@ -45,11 +45,10 @@ struct TaskBlockView: View {
         }
     }
 
-    private static let palette: [Color] = [.blue, .green, .orange, .purple, .pink, .teal, .red, .yellow, .indigo, .mint]
-
     private var blockColor: Color {
+        let palette = ProjectColorGenerator.blockPalette
         if let idx = block.colorIndex {
-            return Self.palette[idx % Self.palette.count]
+            return palette[idx % palette.count]
         }
         return taskItem?.projectUUID.map { ProjectColorGenerator.color(for: $0) } ?? .gray
     }

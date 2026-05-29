@@ -46,7 +46,7 @@ Time blocking turns intentions into commitments. Instead of a flat list of "thin
 - Live read-only access to your Things 3 database
 - Tasks grouped by Things 3 categories: Inbox, Today, Upcoming, Anytime, Someday
 - Area → Project hierarchy with expand/collapse controls
-- Areas and projects sorted alphabetically; tasks within a project keep your Things 3 order
+- Areas and projects sorted alphabetically; tasks sorted by date (soonest first), then alphabetically
 - Deadline indicators with red calendar icon
 - Completed tasks automatically removed from the schedule
 - Option to hide or keep tasks visible after scheduling
@@ -128,7 +128,9 @@ xcodegen generate
 open TimeboxForThings3.xcodeproj
 ```
 
-In Xcode, select the `TimeboxForThings3` scheme and set your own Development Team under **Signing & Capabilities** before building. (Alternatively, add `DEVELOPMENT_TEAM: YOURTEAMID` to `project.yml` and re-run `xcodegen generate`.) For iCloud sync, your Apple Developer account also needs CloudKit configured.
+In Xcode, select the `TimeboxForThings3` scheme and set your own Development Team under **Signing & Capabilities** before building. (Alternatively, add `DEVELOPMENT_TEAM: YOURTEAMID` to `project.yml` and re-run `xcodegen generate`.)
+
+For iCloud sync, your Apple Developer account also needs CloudKit configured. The container identifier is hardcoded as `iCloud.com.timebox.TimeboxForThings3` in `CloudKitBridge.swift` (and the entitlements file) — change it to a container your account owns if you're building your own copy.
 
 To build from the command line:
 

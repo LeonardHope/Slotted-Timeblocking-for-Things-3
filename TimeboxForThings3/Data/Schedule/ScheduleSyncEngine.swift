@@ -45,33 +45,6 @@ final class ScheduleSyncEngine {
         }
     }
 
-    /// Delete zone and clear sync state BEFORE creating the engine.
-    static func resetZoneAndState() async {
-        let logger = Logger(subsystem: "com.timebox.TimeboxForThings3", category: "sync")
-        let database = CloudKitBridge.container.privateCloudDatabase
-
-        // Clear local sync state and cache
-        try? FileManager.default.removeItem(at: stateURL)
-        try? FileManager.default.removeItem(at: cacheURL)
-
-        // Delete the CloudKit zone (removes all server records)
-        do {
-            try await database.deleteRecordZone(withID: CloudKitBridge.zoneID)
-            logger.info("Deleted zone")
-        } catch {
-            logger.info("Zone delete skipped: \(error)")
-        }
-
-        // Recreate the zone
-        let zone = CKRecordZone(zoneID: CloudKitBridge.zoneID)
-        do {
-            try await database.save(zone)
-            logger.info("Created zone: \(CloudKitBridge.zoneName)")
-        } catch {
-            logger.error("Failed to create zone: \(error)")
-        }
-    }
-
     func pushAllExistingRecords() {
         do {
             var pending: [CKSyncEngine.PendingRecordZoneChange] = []
