@@ -33,9 +33,4 @@ enum ProjectColorGenerator {
         let hash = identifier.utf8.reduce(0) { ($0 &+ Int($1)) &* 31 }
         return blockPalette[abs(hash) % blockPalette.count]
     }
-
-    static func colorIndex(for identifier: String) -> Int {
-        let hash = identifier.utf8.reduce(0) { ($0 &+ Int($1)) &* 31 }
-        return abs(hash) % blockPalette.count
-    }
 }

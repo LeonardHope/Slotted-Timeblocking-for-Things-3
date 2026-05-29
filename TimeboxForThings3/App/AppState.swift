@@ -109,6 +109,11 @@ final class AppState {
         self.showCalendarEvents = defaults.bool(forKey: "showCalendarEvents")
         self.iCloudSyncEnabled = defaults.bool(forKey: "iCloudSyncEnabled")
         if self.textScale == 0 { self.textScale = 1.0 }
+        // Enforce a valid schedule window (end strictly after start).
+        if self.endHour <= self.startHour {
+            self.startHour = min(self.startHour, 22)
+            self.endHour = self.startHour + 1
+        }
     }
 
     func initialize() async {
@@ -129,6 +134,10 @@ final class AppState {
         do {
             scheduleStore = try ScheduleStore(demoMode: MockTaskProvider.isEnabled)
             try await scheduleStore?.loadBlocks(for: selectedDate)
+            // If the app wasn't running across midnight, carry routines forward now.
+            if !clearAtMidnight {
+                carryForwardRoutinesIfNeeded(to: selectedDate)
+            }
             if MockTaskProvider.isEnabled {
                 seedDemoSchedule()
             }
@@ -163,8 +172,8 @@ final class AppState {
                 if self.clearAtMidnight {
                     try? self.scheduleStore?.clearBlocks(for: yesterday)
                 } else {
-                    // Copy yesterday's blocks to today so recurring blocks carry forward
-                    try? self.scheduleStore?.copyBlocks(from: yesterday, to: today)
+                    // Carry recurring standalone blocks forward so routines persist.
+                    self.carryForwardRoutinesIfNeeded(to: today)
                 }
                 await self.changeDate(to: today)
             }
@@ -182,6 +191,9 @@ final class AppState {
             do {
                 scheduleStore = try ScheduleStore(demoMode: false)
                 try await scheduleStore?.loadBlocks(for: selectedDate)
+                if !clearAtMidnight {
+                    carryForwardRoutinesIfNeeded(to: selectedDate)
+                }
             } catch {
                 self.error = error
             }
@@ -246,17 +258,18 @@ final class AppState {
     private func startSyncEngine() async {
         guard let store = scheduleStore else { return }
         do {
-            // On first sync, clear stale state and zone before creating engine
-            if !UserDefaults.standard.bool(forKey: "hasPerformedInitialSyncV2") {
-                await ScheduleSyncEngine.resetZoneAndState()
-                let engine = try ScheduleSyncEngine(store: store)
+            let engine = try ScheduleSyncEngine(store: store)
+            // Ensure the shared record zone exists without ever deleting it —
+            // a second device must never wipe records pushed by the first.
+            await engine.ensureZoneExists()
+            // Push this device's local records once. Records that already exist
+            // on the server (by record name) are reconciled by CKSyncEngine, so
+            // this merges rather than overwrites across devices.
+            if !UserDefaults.standard.bool(forKey: "hasPushedInitialRecords") {
                 engine.pushAllExistingRecords()
-                UserDefaults.standard.set(true, forKey: "hasPerformedInitialSyncV2")
-                syncEngine = engine
-            } else {
-                let engine = try ScheduleSyncEngine(store: store)
-                syncEngine = engine
+                UserDefaults.standard.set(true, forKey: "hasPushedInitialRecords")
             }
+            syncEngine = engine
         } catch {
             self.error = error
         }
@@ -274,10 +287,32 @@ final class AppState {
         }
     }
 
+    private static let lastCarryForwardKey = "lastCarryForwardDate"
+
+    /// Carry routines forward at most once per calendar day. Without this guard,
+    /// the launch-time call would re-copy the previous day's routines every time
+    /// the app starts — so intentionally deleting today's standalone blocks and
+    /// relaunching would resurrect them. The persisted marker (an ISO date string,
+    /// which sorts chronologically) ensures we only carry forward when crossing
+    /// into a date we haven't carried into yet.
+    private func carryForwardRoutinesIfNeeded(to date: Date) {
+        let target = ScheduleStore.isoDateString(from: date)
+        let last = UserDefaults.standard.string(forKey: Self.lastCarryForwardKey)
+        if let last, last >= target { return }
+        try? scheduleStore?.carryForwardStandaloneBlocks(to: date)
+        UserDefaults.standard.set(target, forKey: Self.lastCarryForwardKey)
+    }
+
     private func removeCompletedBlocks() {
         guard let store = scheduleStore else { return }
+        // Guard against wiping the schedule while Things 3 data is still loading
+        // (an empty task set would otherwise orphan every block).
+        guard !taskProvider.tasks.isEmpty else { return }
         let activeTaskIDs = Set(taskProvider.tasks.map(\.id))
-        let orphanedBlocks = store.timeBlocks.filter { !activeTaskIDs.contains($0.taskUUID) }
+        // Check every date, not just the loaded one, so orphaned blocks don't
+        // linger in the database (and can't be carried forward later).
+        let allBlocks = (try? store.allTimeBlocks()) ?? []
+        let orphanedBlocks = allBlocks.filter { !activeTaskIDs.contains($0.taskUUID) }
         for block in orphanedBlocks {
             try? store.deleteTimeBlock(id: block.id)
         }

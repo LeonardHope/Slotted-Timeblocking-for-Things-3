@@ -34,7 +34,7 @@ struct ScheduleGridView: View {
 
                             // Now line
                             if appState.showCurrentTimeLine {
-                                NowLineView(startHour: appState.startHour)
+                                NowLineView(startHour: appState.startHour, endHour: appState.endHour)
                                     .padding(.top, topPadding)
                                     .id("nowLine")
                             }
@@ -121,14 +121,63 @@ struct ScheduleGridView: View {
 
     private var calendarLayer: some View {
         ZStack(alignment: .topLeading) {
-            ForEach(appState.calendarProvider.events.filter { !$0.isAllDay }) { event in
-                CalendarEventView(event: event)
-                    .offset(
-                        x: Theme.timeLabelWidth + 4,
-                        y: yPosition(for: event.startMinutes)
-                    )
-                    .padding(.trailing, Theme.timeLabelWidth + 12)
+            ForEach(visibleCalendarEvents) { positioned in
+                CalendarEventView(
+                    event: positioned.clamped,
+                    labelStartMinutes: positioned.trueStart,
+                    labelDurationMinutes: positioned.trueDuration
+                )
+                .offset(
+                    x: Theme.timeLabelWidth + 4,
+                    y: yPosition(for: positioned.clamped.startMinutes)
+                )
+                .padding(.trailing, Theme.timeLabelWidth + 12)
             }
+        }
+    }
+
+    /// A calendar event positioned for the grid: `clamped` carries the geometry
+    /// (offset/height) restricted to the visible window, while `trueStart`/
+    /// `trueDuration` preserve the real event times for the label.
+    private struct PositionedEvent: Identifiable {
+        let id: String
+        let clamped: CalendarEvent
+        let trueStart: Int
+        let trueDuration: Int
+    }
+
+    /// Timed calendar events clamped to the visible [startHour, endHour] window.
+    /// Events entirely outside the window are dropped; events crossing a boundary
+    /// are clipped (geometry only) so they never render above or below the grid,
+    /// while the label still shows the event's true start/end times.
+    private var visibleCalendarEvents: [PositionedEvent] {
+        let endMinutes = appState.endHour * 60
+        return appState.calendarProvider.events.compactMap { event in
+            guard !event.isAllDay else { return nil }
+            let eventStart = event.startMinutes
+            let eventEnd = event.startMinutes + event.duration
+            let visibleStart = max(eventStart, startMinutes)
+            let visibleEnd = min(eventEnd, endMinutes)
+            guard visibleEnd > visibleStart else { return nil }
+            let clamped: CalendarEvent
+            if visibleStart == eventStart && visibleEnd == eventEnd {
+                clamped = event
+            } else {
+                clamped = CalendarEvent(
+                    id: event.id,
+                    title: event.title,
+                    startMinutes: visibleStart,
+                    duration: visibleEnd - visibleStart,
+                    calendarColor: event.calendarColor,
+                    isAllDay: false
+                )
+            }
+            return PositionedEvent(
+                id: event.id,
+                clamped: clamped,
+                trueStart: eventStart,
+                trueDuration: event.duration
+            )
         }
     }
 
@@ -161,7 +210,7 @@ struct ScheduleGridView: View {
                         onColorCycle: {
                             var updated = block
                             let current = block.colorIndex ?? 0
-                            updated.colorIndex = (current + 1) % 10
+                            updated.colorIndex = (current + 1) % ProjectColorGenerator.blockPalette.count
                             try? store.updateTimeBlock(updated)
                         }
                     )
@@ -185,7 +234,7 @@ struct ScheduleGridView: View {
                         },
                         onColorCycle: {
                             var updated = block
-                            updated.colorIndex = (block.colorIndex + 1) % 10
+                            updated.colorIndex = (block.colorIndex + 1) % ProjectColorGenerator.blockPalette.count
                             try? store.updateStandaloneBlock(updated)
                         },
                         onMove: { newStart in

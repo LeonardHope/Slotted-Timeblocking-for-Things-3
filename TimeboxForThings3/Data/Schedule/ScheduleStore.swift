@@ -96,15 +96,6 @@ final class ScheduleStore {
         notifyDeleted(id, "TimeBlock")
     }
 
-    func deleteTimeBlocks(forTaskUUID uuid: String) throws {
-        let ids = timeBlocks.filter { $0.taskUUID == uuid }.map(\.id)
-        _ = try dbPool.write { db in
-            try TimeBlock.filter(Column("taskUUID") == uuid).deleteAll(db)
-        }
-        timeBlocks.removeAll { $0.taskUUID == uuid }
-        for id in ids { notifyDeleted(id, "TimeBlock") }
-    }
-
     // MARK: - Standalone Blocks
 
     @discardableResult
@@ -170,43 +161,54 @@ final class ScheduleStore {
         for id in sbIDs { notifyDeleted(id, "StandaloneBlock") }
     }
 
-    /// Copy all blocks from one date to another (for carrying blocks into the next day).
-    func copyBlocks(from sourceDate: Date, to targetDate: Date) throws {
-        let sourceDateString = Self.isoDateString(from: sourceDate)
+    /// Carry recurring standalone blocks (lunch, breaks, etc.) forward into `targetDate`.
+    ///
+    /// Copies the standalone blocks from the most recent prior date that has any —
+    /// so routines survive even if the app wasn't running for a few days. Task-linked
+    /// time blocks are intentionally *not* carried forward. No-op if the target date
+    /// already has standalone blocks (so we never duplicate on repeated launches).
+    func carryForwardStandaloneBlocks(to targetDate: Date) throws {
         let targetDateString = Self.isoDateString(from: targetDate)
+
+        let (alreadyPopulated, sourceDateString) = try dbPool.read { db -> (Bool, String?) in
+            let existing = try StandaloneBlock
+                .filter(Column("date") == targetDateString)
+                .fetchCount(db)
+            let source = try String.fetchOne(
+                db,
+                sql: "SELECT date FROM standaloneBlock WHERE date < ? ORDER BY date DESC LIMIT 1",
+                arguments: [targetDateString]
+            )
+            return (existing > 0, source)
+        }
+
+        guard !alreadyPopulated, let sourceDateString else { return }
+
+        let sourceBlocks = try dbPool.read { db in
+            try StandaloneBlock
+                .filter(Column("date") == sourceDateString)
+                .order(Column("startTime"))
+                .fetchAll(db)
+        }
+
         let now = Date().timeIntervalSince1970
-
-        let sourceTimeBlocks = try dbPool.read { db in
-            try TimeBlock.filter(Column("date") == sourceDateString).fetchAll(db)
-        }
-        let sourceStandaloneBlocks = try dbPool.read { db in
-            try StandaloneBlock.filter(Column("date") == sourceDateString).fetchAll(db)
-        }
-
-        var newTimeBlocks: [TimeBlock] = []
-        var newStandaloneBlocks: [StandaloneBlock] = []
-
+        var newBlocks: [StandaloneBlock] = []
         try dbPool.write { db in
-            for var block in sourceTimeBlocks {
+            for var block in sourceBlocks {
                 block.id = UUID().uuidString
                 block.date = targetDateString
                 block.createdAt = now
                 block.updatedAt = now
                 try block.insert(db)
-                newTimeBlocks.append(block)
-            }
-            for var block in sourceStandaloneBlocks {
-                block.id = UUID().uuidString
-                block.date = targetDateString
-                block.createdAt = now
-                block.updatedAt = now
-                try block.insert(db)
-                newStandaloneBlocks.append(block)
+                newBlocks.append(block)
             }
         }
 
-        for block in newTimeBlocks { notifySaved(block) }
-        for block in newStandaloneBlocks { notifySaved(block) }
+        if targetDateString == currentDateString {
+            standaloneBlocks.append(contentsOf: newBlocks)
+            standaloneBlocks.sort { $0.startTime < $1.startTime }
+        }
+        for block in newBlocks { notifySaved(block) }
     }
 
     // MARK: - Upsert (for sync engine applying remote changes)

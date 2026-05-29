@@ -1,7 +1,8 @@
 import Foundation
 import GRDB
 
-private func format12Hour(_ totalMinutes: Int) -> String {
+/// Formats minutes-from-midnight as a compact 12-hour string (e.g. "9am", "1:30pm").
+func format12Hour(_ totalMinutes: Int) -> String {
     let h = totalMinutes / 60
     let m = totalMinutes % 60
     let period = h >= 12 ? "pm" : "am"

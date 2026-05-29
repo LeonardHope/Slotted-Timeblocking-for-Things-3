@@ -3,6 +3,7 @@ import SwiftUI
 /// Red horizontal line showing the current time on the schedule grid.
 struct NowLineView: View {
     let startHour: Int
+    let endHour: Int
     @State private var now = Date()
 
     private let timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
@@ -37,8 +38,9 @@ struct NowLineView: View {
         let minute = calendar.component(.minute, from: now)
         let currentMinutes = hour * 60 + minute
         let startMinutes = startHour * 60
+        let endMinutes = endHour * 60
 
-        guard currentMinutes >= startMinutes else { return nil }
+        guard currentMinutes >= startMinutes, currentMinutes <= endMinutes else { return nil }
         return CGFloat(currentMinutes - startMinutes) * Theme.pointsPerMinute
     }
 }

@@ -17,14 +17,15 @@ struct SettingsView: View {
 
         Form {
             Section("Schedule Hours") {
+                // Options are cross-constrained so End is always after Start.
                 Picker("Start", selection: $state.startHour) {
-                    ForEach(hourOptions, id: \.self) { hour in
+                    ForEach(hourOptions.filter { $0 < state.endHour }, id: \.self) { hour in
                         Text(formatHour(hour)).tag(hour)
                     }
                 }
 
                 Picker("End", selection: $state.endHour) {
-                    ForEach(hourOptions, id: \.self) { hour in
+                    ForEach(hourOptions.filter { $0 > state.startHour }, id: \.self) { hour in
                         Text(formatHour(hour)).tag(hour)
                     }
                 }

@@ -18,8 +18,6 @@ struct TaskItem: Identifiable, Hashable {
     let checklistTotal: Int
     let checklistOpen: Int
 
-    var hasNotes: Bool { notes != nil && !(notes?.isEmpty ?? true) }
-    var hasChecklist: Bool { checklistTotal > 0 }
     var isOverdue: Bool {
         guard let deadline else { return false }
         return deadline < Calendar.current.startOfDay(for: .now)
@@ -51,19 +49,5 @@ struct TaskItem: Identifiable, Hashable {
         } else {
             return Self.dateFormatter.string(from: deadline)
         }
-    }
-
-    /// Display text for the most relevant date — deadline takes priority, then start date.
-    var dateDisplayText: String? {
-        if let text = deadlineDisplayText { return text }
-        guard let startDate else { return nil }
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMM d"
-        return formatter.string(from: startDate)
-    }
-
-    /// Whether the displayed date is a deadline (vs a start date).
-    var displayedDateIsDeadline: Bool {
-        deadline != nil
     }
 }

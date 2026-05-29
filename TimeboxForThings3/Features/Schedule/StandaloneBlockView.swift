@@ -26,8 +26,10 @@ struct StandaloneBlockView: View {
 
     private enum DragMode { case none, move, resizeTop, resizeBottom }
 
-    private static let colors: [Color] = [.blue, .green, .orange, .purple, .pink, .teal, .red, .yellow, .indigo, .mint]
-    private var blockColor: Color { Self.colors[block.colorIndex % Self.colors.count] }
+    private var blockColor: Color {
+        let palette = ProjectColorGenerator.blockPalette
+        return palette[block.colorIndex % palette.count]
+    }
 
     private var visualOffset: CGFloat {
         switch dragMode {
