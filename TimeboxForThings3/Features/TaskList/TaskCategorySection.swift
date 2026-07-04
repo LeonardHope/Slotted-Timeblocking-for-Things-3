@@ -50,17 +50,21 @@ struct TaskCategorySection: View {
                         : areaGroup.projects
 
                     if !hideEmpty || !visibleProjects.isEmpty {
-                        if let areaName = areaGroup.areaName {
-                            areaHeader(areaName, key: areaGroup.id)
-                        }
+                        // Tasks with no area collect under an "Unassigned" header, so
+                        // every task sits beneath a toggleable group header consistent
+                        // with the named-area sections.
+                        areaHeader(areaGroup.areaName ?? "Unassigned", key: areaGroup.id)
 
                         if expandedAreas.contains(areaGroup.id) {
                             ForEach(visibleProjects) { projectGroup in
                                 if let projectName = projectGroup.projectName {
-                                    projectHeader(projectName, key: projectGroup.id, indented: areaGroup.areaName != nil)
+                                    projectHeader(projectName, key: projectGroup.id, indented: true)
                                 }
 
-                                if expandedProjects.contains(projectGroup.id) {
+                                // Tasks with no project render directly under their area
+                                // header, so they must always show when the area is
+                                // expanded rather than gate on a non-existent toggle.
+                                if projectGroup.projectName == nil || expandedProjects.contains(projectGroup.id) {
                                     ForEach(projectGroup.tasks) { task in
                                         TaskRowView(task: task)
                                     }
@@ -173,16 +177,20 @@ struct TaskCategorySection: View {
             areaMap[areaKey]![projectKey]!.append(task)
         }
 
+        // Loose (ungrouped) tasks render without a header, so they must lead —
+        // matching Things 3, where items with no area/project sit at the top of a
+        // list. Sorting them last would append them under the final area's tasks,
+        // making them read as part of that area.
         let sortedAreas = areaOrder.sorted { a, b in
-            if a == "__no_area__" { return false }
-            if b == "__no_area__" { return true }
+            if a == "__no_area__" { return true }
+            if b == "__no_area__" { return false }
             return a.localizedCaseInsensitiveCompare(b) == .orderedAscending
         }
 
         return sortedAreas.map { areaKey in
             let sortedProjects = (projectOrder[areaKey] ?? []).sorted { a, b in
-                if a == "__no_project__" { return false }
-                if b == "__no_project__" { return true }
+                if a == "__no_project__" { return true }
+                if b == "__no_project__" { return false }
                 return a.localizedCaseInsensitiveCompare(b) == .orderedAscending
             }
             let projects = sortedProjects.map { projectKey in
