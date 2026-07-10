@@ -41,11 +41,16 @@ targets:
         INFOPLIST_FILE: TimeboxForThings3/Resources/Info.plist
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         GENERATE_INFOPLIST_FILE: YES
-        CODE_SIGN_ENTITLEMENTS: TimeboxForThings3/Resources/TimeboxForThings3.entitlements
         CODE_SIGN_IDENTITY: "Apple Development"
         CODE_SIGN_STYLE: Automatic
         ENABLE_APP_SANDBOX: YES
         SWIFT_STRICT_CONCURRENCY: complete
+      configs:
+        Debug:
+          CODE_SIGN_ENTITLEMENTS: TimeboxForThings3/Resources/TimeboxForThings3.entitlements
+        Release:
+          # Same entitlements with aps-environment=production for App Store distribution
+          CODE_SIGN_ENTITLEMENTS: TimeboxForThings3/Resources/TimeboxForThings3-Release.entitlements
 
   TimeboxForThings3Tests:
     type: bundle.unit-test

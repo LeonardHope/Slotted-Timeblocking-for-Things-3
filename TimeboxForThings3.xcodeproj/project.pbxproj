@@ -27,6 +27,7 @@
 		7B527ABBF4C4BFA244C065EE /* TaskRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9B3F2746FB31C68CFCD1659 /* TaskRowView.swift */; };
 		80E6A4ECBC3E539A9CE00428 /* CalendarEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6D71B604CA0AF6520A53920 /* CalendarEventView.swift */; };
 		868D74A7C09DB1C5CCED487C /* CloudKitBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F441E2638A8679A2E52D2F0 /* CloudKitBridge.swift */; };
+		9063543B1BF2916D9684ECDE /* ScheduleStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C74C95C051A20F862E8AC66 /* ScheduleStoreTests.swift */; };
 		972DF9D3E327654C76C4EA3B /* ScheduleModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = F200FE713F4A63DD87711ACA /* ScheduleModels.swift */; };
 		97CAE413DDCDD6D0CCD3C49B /* TaskProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC0AA55E3BFB7761B28F44EA /* TaskProvider.swift */; };
 		A3B79F258DECE1D477FF8431 /* Things3Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7DCEBEDE61AA69E08DF5395 /* Things3Database.swift */; };
@@ -76,6 +77,8 @@
 		79EB5537F38518438A416185 /* TaskCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCategory.swift; sourceTree = "<group>"; };
 		7ABD73A7A737C1C1465974F3 /* TimeboxForThings3Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TimeboxForThings3Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B3EEB30F6C587D1E3E496A8 /* MockTaskProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTaskProvider.swift; sourceTree = "<group>"; };
+		881776A2B927451D1C9D9170 /* TimeboxForThings3-Release.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "TimeboxForThings3-Release.entitlements"; sourceTree = "<group>"; };
+		8C74C95C051A20F862E8AC66 /* ScheduleStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleStoreTests.swift; sourceTree = "<group>"; };
 		94A2A252A790007DE552CC35 /* ProjectInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectInfo.swift; sourceTree = "<group>"; };
 		9B8070ED18AFFD23E729C3C3 /* DropTargetGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropTargetGrid.swift; sourceTree = "<group>"; };
 		A5026BA20AFA7BF9793186B4 /* SummaryBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryBarView.swift; sourceTree = "<group>"; };
@@ -120,6 +123,7 @@
 		2A450ECB802C29DEF7085751 /* TimeboxForThings3Tests */ = {
 			isa = PBXGroup;
 			children = (
+				8C74C95C051A20F862E8AC66 /* ScheduleStoreTests.swift */,
 				A7AEE061F235CA189E773C09 /* TaskCategorizationTests.swift */,
 				5B90FED346A412DC56B39F39 /* Things3DateDecoderTests.swift */,
 			);
@@ -196,6 +200,7 @@
 			children = (
 				E65AEF1CAAEC7BC8CAF20844 /* Assets.xcassets */,
 				1380041A7F0B046E373D7EC4 /* Info.plist */,
+				881776A2B927451D1C9D9170 /* TimeboxForThings3-Release.entitlements */,
 				E942232CA85F48E70A8DDF5D /* TimeboxForThings3.entitlements */,
 			);
 			path = Resources;
@@ -396,6 +401,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9063543B1BF2916D9684ECDE /* ScheduleStoreTests.swift in Sources */,
 				625071635E938746094940C8 /* TaskCategorizationTests.swift in Sources */,
 				C871EBF5B5B254A381531ABD /* Things3DateDecoderTests.swift in Sources */,
 			);
@@ -642,7 +648,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = TimeboxForThings3/Resources/TimeboxForThings3.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "TimeboxForThings3/Resources/TimeboxForThings3-Release.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;

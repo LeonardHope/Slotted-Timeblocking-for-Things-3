@@ -80,19 +80,21 @@ struct ScheduleGridView: View {
             timeLabelWidth: Theme.timeLabelWidth,
             onDrop: { taskUUID, minutes in
                 guard let store = appState.scheduleStore else { return }
-                let snapped = snapToGrid(minutes)
+                let placed = clamp(start: snapToGrid(minutes), duration: 30)
                 _ = try? store.addTimeBlock(
                     taskUUID: taskUUID,
                     date: appState.selectedDate,
-                    startTime: snapped
+                    startTime: placed.start,
+                    duration: placed.duration
                 )
             },
             onDoubleClick: { minutes in
                 guard let store = appState.scheduleStore else { return }
-                let snapped = snapToGrid(minutes)
+                let placed = clamp(start: snapToGrid(minutes), duration: 30)
                 _ = try? store.addStandaloneBlock(
                     date: appState.selectedDate,
-                    startTime: snapped
+                    startTime: placed.start,
+                    duration: placed.duration
                 )
             },
             onSingleClick: {
@@ -115,6 +117,15 @@ struct ScheduleGridView: View {
         let minMinutes = appState.startHour * 60
         let maxMinutes = appState.endHour * 60
         return max(minMinutes, min(start, maxMinutes - duration))
+    }
+
+    /// Clamp both start and duration so the block stays fully inside the visible day.
+    private func clamp(start: Int, duration: Int) -> (start: Int, duration: Int) {
+        let minMinutes = appState.startHour * 60
+        let maxMinutes = appState.endHour * 60
+        let clampedDuration = max(15, min(duration, maxMinutes - minMinutes))
+        let clampedStart = max(minMinutes, min(start, maxMinutes - clampedDuration))
+        return (clampedStart, clampedDuration)
     }
 
     // MARK: - Calendar events layer
@@ -203,8 +214,7 @@ struct ScheduleGridView: View {
                         },
                         onResize: { newStart, newDuration in
                             var updated = block
-                            updated.startTime = self.clampStart(newStart, duration: newDuration)
-                            updated.duration = newDuration
+                            (updated.startTime, updated.duration) = self.clamp(start: newStart, duration: newDuration)
                             try? store.updateTimeBlock(updated)
                         },
                         onColorCycle: {
@@ -244,8 +254,7 @@ struct ScheduleGridView: View {
                         },
                         onResize: { newStart, newDuration in
                             var updated = block
-                            updated.startTime = self.clampStart(newStart, duration: newDuration)
-                            updated.duration = newDuration
+                            (updated.startTime, updated.duration) = self.clamp(start: newStart, duration: newDuration)
                             try? store.updateStandaloneBlock(updated)
                         }
                     )

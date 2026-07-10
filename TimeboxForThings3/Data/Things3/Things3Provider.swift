@@ -39,7 +39,7 @@ final class Things3Provider: TaskProvider {
             startFileMonitor(dbPath: db.dbPool.path)
             startFallbackTimer()
         } catch {
-            self.error = error
+            self.error = (error as? Things3Error) ?? Things3Error.readFailed
             logger.error("Failed to start observing Things 3: \(error)")
         }
     }
@@ -78,7 +78,9 @@ final class Things3Provider: TaskProvider {
 
             self.error = nil
         } catch {
-            self.error = error
+            // Surface a friendly message; raw SQL errors (e.g. after a Things 3
+            // schema change) mean nothing to the user. Details go to the log.
+            self.error = Things3Error.readFailed
             logger.error("Failed to refresh Things 3 data: \(error)")
         }
     }

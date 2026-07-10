@@ -26,9 +26,9 @@ final class ScheduleStore {
         try ScheduleMigrations.migrator.migrate(dbPool)
     }
 
-    /// In-memory database for testing.
-    init(inMemory: Bool) throws {
-        dbPool = try DatabasePool(path: ":memory:")
+    /// Database at an explicit path, for testing.
+    init(path: String) throws {
+        dbPool = try DatabasePool(path: path)
         try ScheduleMigrations.migrator.migrate(dbPool)
     }
 
@@ -154,6 +154,25 @@ final class ScheduleStore {
             return (tbIDs, sbIDs)
         }
         if dateString == currentDateString {
+            timeBlocks.removeAll()
+            standaloneBlocks.removeAll()
+        }
+        for id in tbIDs { notifyDeleted(id, "TimeBlock") }
+        for id in sbIDs { notifyDeleted(id, "StandaloneBlock") }
+    }
+
+    /// Remove all blocks dated strictly before the given date.
+    /// ISO yyyy-MM-dd strings sort lexicographically in date order.
+    func clearBlocks(before date: Date) throws {
+        let dateString = Self.isoDateString(from: date)
+        let (tbIDs, sbIDs) = try dbPool.write { db -> ([String], [String]) in
+            let tbIDs = try TimeBlock.filter(Column("date") < dateString).fetchAll(db).map(\.id)
+            let sbIDs = try StandaloneBlock.filter(Column("date") < dateString).fetchAll(db).map(\.id)
+            _ = try TimeBlock.filter(Column("date") < dateString).deleteAll(db)
+            _ = try StandaloneBlock.filter(Column("date") < dateString).deleteAll(db)
+            return (tbIDs, sbIDs)
+        }
+        if !currentDateString.isEmpty && currentDateString < dateString {
             timeBlocks.removeAll()
             standaloneBlocks.removeAll()
         }

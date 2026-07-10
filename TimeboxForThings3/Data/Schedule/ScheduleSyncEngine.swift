@@ -66,9 +66,9 @@ final class ScheduleSyncEngine {
     // MARK: - State persistence
 
     private static var stateURL: URL {
-        let dir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        URL.applicationSupportDirectory
             .appendingPathComponent("TimeboxForThings3", isDirectory: true)
-        return dir.appendingPathComponent("sync-engine-state.json")
+            .appendingPathComponent("sync-engine-state.json")
     }
 
     private static func loadState() -> CKSyncEngine.State.Serialization? {
@@ -84,9 +84,9 @@ final class ScheduleSyncEngine {
     // MARK: - Server record cache persistence
 
     private static var cacheURL: URL {
-        let dir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        URL.applicationSupportDirectory
             .appendingPathComponent("TimeboxForThings3", isDirectory: true)
-        return dir.appendingPathComponent("sync-record-cache.data")
+            .appendingPathComponent("sync-record-cache.data")
     }
 
     fileprivate static func loadCachedRecords() -> [CKRecord.ID: CKRecord] {
