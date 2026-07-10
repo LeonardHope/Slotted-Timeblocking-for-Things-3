@@ -181,11 +181,14 @@ final class Things3Database {
 
 enum Things3Error: LocalizedError {
     case databaseNotFound(String)
+    case readFailed
 
     var errorDescription: String? {
         switch self {
         case .databaseNotFound(let message):
             return "Things 3 database not found: \(message)"
+        case .readFailed:
+            return "Couldn't read the Things 3 database. Things 3 may have updated its data format — check for a Slotted update, or re-select the database in case it moved."
         }
     }
 }

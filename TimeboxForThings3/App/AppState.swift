@@ -1,3 +1,4 @@
+import CloudKit
 import Foundation
 import Observation
 import os
@@ -131,13 +132,18 @@ final class AppState {
             await taskProvider.startObserving()
         }
 
+        await setUpSchedule()
+    }
+
+    /// Create the schedule store, roll the schedule over to today, and start observers.
+    private func setUpSchedule() async {
         do {
-            scheduleStore = try ScheduleStore(demoMode: MockTaskProvider.isEnabled)
-            try await scheduleStore?.loadBlocks(for: selectedDate)
-            // If the app wasn't running across midnight, carry routines forward now.
-            if !clearAtMidnight {
-                carryForwardRoutinesIfNeeded(to: selectedDate)
-            }
+            let store = try ScheduleStore(demoMode: MockTaskProvider.isEnabled)
+            scheduleStore = store
+            // Start sync before rollover so clear/carry-forward changes propagate to iCloud
+            if iCloudSyncEnabled { await startSyncEngine() }
+            rolloverIfNeeded()
+            try await store.loadBlocks(for: selectedDate)
             if MockTaskProvider.isEnabled {
                 seedDemoSchedule()
             }
@@ -149,12 +155,25 @@ final class AppState {
             await enableCalendar()
         }
 
-        if iCloudSyncEnabled {
-            await startSyncEngine()
-        }
-
         observeDayChange()
         observeTaskCompletions()
+    }
+
+    /// Roll the schedule over to today: clear past days or carry routines forward,
+    /// per settings. Runs at launch and on the NSCalendarDayChanged notification,
+    /// so a Mac that was asleep or off at midnight still rolls over correctly.
+    private func rolloverIfNeeded() {
+        guard let store = scheduleStore else { return }
+        if clearAtMidnight {
+            // Idempotent — deletes everything dated before today — so no marker needed.
+            do {
+                try store.clearBlocks(before: .now)
+            } catch {
+                self.error = error
+            }
+        } else {
+            carryForwardRoutinesIfNeeded(to: .now)
+        }
     }
 
     /// Listens for NSCalendarDayChanged notification from the system.
@@ -167,15 +186,14 @@ final class AppState {
         ) { [weak self] _ in
             Task { @MainActor [weak self] in
                 guard let self else { return }
-                let today = Date.now
-                let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: today)!
-                if self.clearAtMidnight {
-                    try? self.scheduleStore?.clearBlocks(for: yesterday)
+                self.rolloverIfNeeded()
+                if Calendar.current.isDateInYesterday(self.selectedDate) {
+                    // The user was viewing the day that just ended — follow them to the new day
+                    await self.changeDate(to: .now)
                 } else {
-                    // Carry recurring standalone blocks forward so routines persist.
-                    self.carryForwardRoutinesIfNeeded(to: today)
+                    // Reload in place; rollover may have changed the visible date's blocks
+                    await self.changeDate(to: self.selectedDate)
                 }
-                await self.changeDate(to: today)
             }
         }
     }
@@ -183,25 +201,16 @@ final class AppState {
     /// Called from the onboarding view when the user grants file access.
     func grantDatabaseAccess() async {
         guard let things3 = taskProvider as? Things3Provider else { return }
-        if let path = databaseAccessManager.requestUserAccess() {
+        switch databaseAccessManager.requestUserAccess() {
+        case .granted(let path):
             things3.setDatabasePath(path)
             await taskProvider.startObserving()
             needsOnboarding = false
-
-            do {
-                scheduleStore = try ScheduleStore(demoMode: false)
-                try await scheduleStore?.loadBlocks(for: selectedDate)
-                if !clearAtMidnight {
-                    carryForwardRoutinesIfNeeded(to: selectedDate)
-                }
-            } catch {
-                self.error = error
-            }
-
-            if showCalendarEvents { await enableCalendar() }
-            if iCloudSyncEnabled { await startSyncEngine() }
-            observeDayChange()
-            observeTaskCompletions()
+            await setUpSchedule()
+        case .invalidSelection:
+            self.error = OnboardingError.invalidSelection
+        case .cancelled:
+            break
         }
     }
 
@@ -258,6 +267,12 @@ final class AppState {
     private func startSyncEngine() async {
         guard let store = scheduleStore else { return }
         do {
+            let status = try await CloudKitBridge.container.accountStatus()
+            guard status == .available else {
+                self.error = SyncError.iCloudUnavailable
+                self.iCloudSyncEnabled = false
+                return
+            }
             let engine = try ScheduleSyncEngine(store: store)
             // Ensure the shared record zone exists without ever deleting it —
             // a second device must never wipe records pushed by the first.
@@ -334,6 +349,28 @@ final class AppState {
         case .auto: nil
         case .light: .light
         case .dark: .dark
+        }
+    }
+}
+
+enum OnboardingError: LocalizedError {
+    case invalidSelection
+
+    var errorDescription: String? {
+        switch self {
+        case .invalidSelection:
+            return "That folder doesn't contain a Things 3 database. Select the \"Things Database.thingsdatabase\" folder and try again."
+        }
+    }
+}
+
+enum SyncError: LocalizedError {
+    case iCloudUnavailable
+
+    var errorDescription: String? {
+        switch self {
+        case .iCloudUnavailable:
+            return "iCloud Sync is unavailable. Make sure you're signed in to iCloud in System Settings, then turn sync back on."
         }
     }
 }

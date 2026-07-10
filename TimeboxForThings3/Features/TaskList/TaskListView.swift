@@ -20,6 +20,10 @@ struct TaskListView: View {
                             .font(Theme.metadata)
                             .foregroundStyle(Theme.textSecondary)
                             .multilineTextAlignment(.center)
+                        Button("Re-select Things 3 Database…") {
+                            Task { await appState.grantDatabaseAccess() }
+                        }
+                        .controlSize(.small)
                     }
                     .padding()
                     .frame(maxWidth: .infinity, minHeight: 100)

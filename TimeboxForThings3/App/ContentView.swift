@@ -36,6 +36,17 @@ struct ContentView: View {
         .task {
             await appState.initialize()
         }
+        .alert(
+            "Something Went Wrong",
+            isPresented: Binding(
+                get: { appState.error != nil },
+                set: { if !$0 { appState.error = nil } }
+            )
+        ) {
+            Button("OK") { appState.error = nil }
+        } message: {
+            Text(appState.error?.localizedDescription ?? "An unknown error occurred.")
+        }
     }
 
     private func moveSelectedBlock(by minutes: Int) -> KeyPress.Result {

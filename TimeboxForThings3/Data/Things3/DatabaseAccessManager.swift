@@ -8,6 +8,12 @@ final class DatabaseAccessManager {
     private static let bookmarkKey = "things3DatabaseDirBookmark"
     private var accessingURL: URL?
 
+    enum AccessRequestResult {
+        case granted(String)
+        case cancelled
+        case invalidSelection
+    }
+
     /// Attempt to find or restore access to the Things 3 database.
     /// Returns the path if accessible, nil if user action is needed.
     func resolveAccess() -> String? {
@@ -16,16 +22,19 @@ final class DatabaseAccessManager {
             return path
         }
 
-        // 2. Try the known path directly (works outside sandbox)
+        #if DEBUG
+        // 2. Try the known path directly. Only reachable in non-sandboxed dev builds;
+        // under the App Sandbox this read fails and onboarding is shown instead.
         if let path = try? Things3Database.findDatabasePath() {
             return path
         }
+        #endif
 
         return nil
     }
 
     /// Present an open panel for the user to grant access to the Things 3 database directory.
-    func requestUserAccess() -> String? {
+    func requestUserAccess() -> AccessRequestResult {
         let panel = NSOpenPanel()
         panel.title = "Select Things 3 Database Folder"
         panel.message = "Select the \"Things Database.thingsdatabase\" folder."
@@ -38,17 +47,17 @@ final class DatabaseAccessManager {
         panel.directoryURL = suggestedDirectory()
 
         guard panel.runModal() == .OK, let dirURL = panel.url else {
-            return nil
+            return .cancelled
         }
 
         // Verify main.sqlite exists in the selected directory
         let dbPath = dirURL.appendingPathComponent("main.sqlite").path
         guard FileManager.default.fileExists(atPath: dbPath) else {
-            return nil
+            return .invalidSelection
         }
 
         saveBookmark(for: dirURL)
-        return dbPath
+        return .granted(dbPath)
     }
 
     // MARK: - Bookmark persistence
